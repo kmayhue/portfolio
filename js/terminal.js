@@ -10,7 +10,6 @@ const files = {
     'about.txt': `Hi, I'm Kenny
 Senior Data Engineer based in Emeryville, CA
 
-I build data pipelines, love Python, and specialize in turning data into insights.
 Currently open to new opportunities.
 
 Skills: Python, SQL, Data Engineering, ETL, Pandas, SQLAlchemy`,
