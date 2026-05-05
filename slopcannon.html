@@ -128,6 +128,7 @@
     <script>
         const canvas = document.getElementById('cs-canvas');
         const ctx = canvas.getContext('2d');
+        console.log('Canvas:', canvas, 'Ctx:', ctx);
         const gpCanvas = document.getElementById('gp-canvas');
         const gpCtx = gpCanvas.getContext('2d');
         const dialogueArea = document.getElementById('dialogue-area');
@@ -148,38 +149,39 @@
 
         // Story with correct flow
         const story = [
-            ['walk', 240],           // 0: programmer walks in
-            ['boss_in', 120],        // 1: boss walks in
+            ['wait', 120],          // 0: just wait a bit
+            ['walk', 240],           // 1: programmer walks in
+            ['boss_in', 120],        // 2: boss walks in
             ['dlog', 240, 'BOSS', 'Think of a number between 1 and 10'],
             ['dlog', 180, 'PROGRAMMER', '7'],
             ['dlog', 240, 'BOSS', 'Great. Now automate that.'],
-            ['boss_out', 100],      // 5: boss leaves - now programmer sits and works
-            ['sit', 40],            // 6: programmer sits
-            ['code', 200],          // 7: code appears
-            ['msg', 180],           // 8: message sent to boss
-            ['boss_in', 100],       // 9: boss returns
+            ['boss_out', 100],      // 6: boss leaves - now programmer sits and works
+            ['sit', 40],            // 7: programmer sits
+            ['code', 200],          // 8: code appears
+            ['msg', 180],           // 9: message sent to boss
+            ['boss_in', 100],       // 10: boss returns
             ['dlog', 280, 'BOSS', "You're not using enough tokens!"],
-            ['boss_out', 100],      // 11: boss leaves
-            ['claude', 200],        // 12: get claude
-            ['ai', 220],            // 13: ai code
-            ['msg', 180],           // 14: message sent to boss
-            ['boss_in', 100],       // 15: boss returns
+            ['boss_out', 100],      // 12: boss leaves
+            ['claude', 200],        // 13: get claude
+            ['ai', 220],            // 14: ai code
+            ['msg', 180],           // 15: message sent to boss
+            ['boss_in', 100],       // 16: boss returns
             ['dlog', 320, 'BOSS', "Great! Check the dashboard. Don't fall behind."],
-            ['boss_out', 100],      // 17: boss leaves
-            ['leader', 250, 10],    // 18: show dashboard (last place)
+            ['boss_out', 100],      // 18: boss leaves
+            ['leader', 250, 10],    // 19: show dashboard (last place)
             ['dlog', 200, 'PROGRAMMER', 'Claude, get me to first!'],
-            ['loop', 180],          // 20: write loop.py
-            ['run', 220],           // 21: run loop
-            ['leader', 140, 9],     // 22: 2nd from last
-            ['recurs', 140],        // 23: recursive
-            ['run2', 180],          // 24: run recursive
-            ['leader', 100, 7],     // 25: climbing
+            ['loop', 180],          // 21: write loop.py
+            ['run', 220],           // 22: run loop
+            ['leader', 140, 9],     // 23: 2nd from last
+            ['recurs', 140],        // 24: recursive
+            ['run2', 180],          // 25: run recursive
+            ['leader', 100, 7],     // 26: climbing
             ['leader', 100, 5],
             ['leader', 100, 3],
-            ['leader', 160, 1],     // 28: 1st place
+            ['leader', 160, 1],     // 29: 1st place
             ['dlog', 280, 'BOSS', "You're doing great! Keep it up!"],
-            ['boss_celeb', 140],    // 30: boss celebrates
-            ['infinite', 300],      // 31: infinite
+            ['boss_celeb', 140],    // 31: boss celebrates
+            ['infinite', 300],      // 32: infinite
             ['game', 1]
         ];
 
@@ -305,6 +307,9 @@
         }
 
         function update() {
+            if (frame === 0) {
+                console.log('First frame, scene:', scene, 'type:', story[scene] ? story[scene][0] : 'none');
+            }
             frame++;
             ctx.fillStyle = '#0a0a0a';
             ctx.fillRect(0, 0, 800, 360);
@@ -323,7 +328,9 @@
             drawPC(300, 180);
             drawProg(programmer.x, programmer.y, programmer.emotion || 'neutral', programmer.sitting);
 
-            if (type === 'walk') {
+            if (type === 'wait') {
+                // Just wait, do nothing
+            } else if (type === 'walk') {
                 programmer.x = Math.min(programmer.x + 4, 180);
             } else if (type === 'sit') {
                 programmer.sitting = true;
@@ -501,6 +508,7 @@
         document.addEventListener('keydown', e => { if (e.code === 'Space') { e.preventDefault(); jump(); } });
         document.getElementById('game').onclick = jump;
 
+        console.log('Starting update, scene:', scene, 'story length:', story.length);
         update();
     </script>
 </body>
