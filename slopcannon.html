@@ -7,11 +7,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             background: #0d0d0d;
@@ -23,9 +19,7 @@
             overflow: hidden;
         }
 
-        #game-container {
-            width: 800px;
-        }
+        #game-container { width: 800px; }
 
         #header {
             background: #00ff00;
@@ -38,7 +32,7 @@
         #game {
             position: relative;
             width: 800px;
-            height: 400px;
+            height: 440px;
             background: #0d0d0d;
             border: 4px solid #00ff00;
             overflow: hidden;
@@ -49,7 +43,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            height: 360px;
         }
 
         #dialogue-area {
@@ -57,22 +51,15 @@
             bottom: 0;
             left: 0;
             right: 0;
+            height: 80px;
             background: #000;
             border-top: 3px solid #00ff00;
-            padding: 12px 20px;
+            padding: 10px 20px;
             display: none;
         }
 
-        #speaker {
-            color: #00ff00;
-            font-size: 20px;
-            margin-bottom: 4px;
-        }
-
-        #text {
-            color: #fff;
-            font-size: 22px;
-        }
+        #speaker { color: #00ff00; font-size: 20px; margin-bottom: 4px; }
+        #text { color: #fff; font-size: 22px; }
 
         #skip-btn {
             position: absolute;
@@ -88,13 +75,9 @@
             z-index: 100;
         }
 
-        #skip-btn:hover {
-            background: #00cc00;
-        }
+        #skip-btn:hover { background: #00cc00; }
 
-        #gameplay {
-            display: none;
-        }
+        #gameplay { display: none; }
 
         #score {
             position: absolute;
@@ -102,6 +85,7 @@
             right: 10px;
             color: #00ff00;
             font-size: 24px;
+            z-index: 10;
         }
 
         #instructions {
@@ -110,6 +94,7 @@
             left: 10px;
             color: #006600;
             font-size: 18px;
+            z-index: 10;
         }
 
         #game-over {
@@ -126,17 +111,8 @@
             z-index: 50;
         }
 
-        #game-over h1 {
-            color: #ff0000;
-            font-size: 48px;
-            margin-bottom: 20px;
-        }
-
-        #game-over p {
-            color: #00ff00;
-            font-size: 24px;
-            margin-bottom: 30px;
-        }
+        #game-over h1 { color: #ff0000; font-size: 48px; margin-bottom: 20px; }
+        #game-over p { color: #00ff00; font-size: 24px; margin-bottom: 30px; }
 
         #restart-btn {
             background: #00ff00;
@@ -148,9 +124,7 @@
             cursor: pointer;
         }
 
-        canvas {
-            display: block;
-        }
+        canvas { display: block; }
     </style>
 </head>
 <body>
@@ -160,7 +134,7 @@
             <button id="skip-btn">SKIP >></button>
 
             <div id="cutscene">
-                <canvas id="cs-canvas" width="800" height="370"></canvas>
+                <canvas id="cs-canvas" width="800" height="360"></canvas>
             </div>
 
             <div id="dialogue-area">
@@ -169,7 +143,7 @@
             </div>
 
             <div id="gameplay">
-                <canvas id="gp-canvas" width="800" height="370"></canvas>
+                <canvas id="gp-canvas" width="800" height="360"></canvas>
                 <div id="score">TOKENS: 0</div>
                 <div id="instructions">[SPACE] to jump</div>
             </div>
@@ -199,116 +173,68 @@
         const restartBtn = document.getElementById('restart-btn');
 
         let frameCount = 0;
-        let state = 'intro';
-        let subState = 0;
-        let dialogueTimer = 0;
+        let currentScene = 0;
+        let sceneTimer = 0;
         let tokens = 0;
         let gameRunning = false;
 
-        // Characters
-        const programmer = { x: -50, y: 250, targetX: 200, state: 'idle', emotion: 'neutral' };
-        const boss = { x: 850, y: 240, targetX: 400, state: 'off' };
-
-        // File display
-        let files = [];
-        let messages = [];
-
-        // Player
-        const player = { x: 100, y: 300, vy: 0, grounded: true };
+        const programmer = { x: -50, y: 250, targetX: 200, emotion: 'neutral' };
+        const boss = { x: 850, y: 240, targetX: 400 };
+        const player = { x: 100, y: 280, vy: 0, grounded: true };
         let obstacles = [];
         let obstacleTimer = 0;
 
-        // Scene definitions
         const scenes = [
-            // 0-2: Programmer walks in
-            { type: 'walk_in', duration: 120 },
-            // 3-5: Boss enters
+            { type: 'walk_in', duration: 90 },
             { type: 'boss_enter', duration: 60 },
-            // 6-8: Think 7
-            { type: 'think', text: '7', duration: 90 },
-            // 9-11: Boss leaves
-            { type: 'boss_leave', duration: 60 },
-            // 12-14: Write code
-            { type: 'write_code', duration: 120 },
-            // 15-17: Send message
-            { type: 'message', text: 'I did it!', duration: 90 },
-            // 18-20: Boss returns angry
-            { type: 'boss_return', duration: 60 },
-            // 21: Boss angry dialogue
+            { type: 'think', speaker: 'BOSS', text: 'Think of a number between 1 and 10', duration: 1800 },
+            { type: 'think', speaker: 'PROGRAMMER', text: '7', duration: 1200 },
+            { type: 'think', speaker: 'BOSS', text: 'Great. Now automate that.', duration: 1800 },
+            { type: 'boss_leave', duration: 50 },
+            { type: 'write_code', duration: 100 },
+            { type: 'message', text: 'I did it!', duration: 80 },
+            { type: 'boss_return', duration: 50 },
             { type: 'dialogue', speaker: 'BOSS', text: "You're not using enough tokens!", duration: 2000 },
-            // 22-24: Boss leaves
-            { type: 'boss_leave', duration: 60 },
-            // 25-27: Rename to v1, get Claude
-            { type: 'get_claude', duration: 150 },
-            // 28-30: AI writes code
-            { type: 'ai_code', duration: 150 },
-            // 31-33: Click file, message boss
-            { type: 'message_ai', text: 'I did it using AI', duration: 90 },
-            // 34-36: Boss returns
-            { type: 'boss_return', duration: 60 },
-            // 37: Boss dialogue
-            { type: 'dialogue', speaker: 'BOSS', text: 'Great! Check the dashboard. Don\'t fall behind.', duration: 2500 },
-            // 38: Boss leaves
-            { type: 'boss_leave', duration: 60 },
-            // 39-41: Click dashboard, see last place
-            { type: 'leaderboard', place: 10, duration: 120 },
-            // 42: Think
-            { type: 'think', text: '...', duration: 60 },
-            // 43: Dialogue
-            { type: 'dialogue', speaker: 'PROGRAMMER', text: 'Claude, get me to first place!', duration: 1500 },
-            // 44-46: Write loop.py
-            { type: 'write_loop', duration: 120 },
-            // 47-49: Run loop.py, walk away
-            { type: 'run_loop', duration: 120 },
-            // 50-52: Check - 2nd from last
-            { type: 'leaderboard', place: 9, duration: 90 },
-            // 53-55: Write recursive
-            { type: 'write_recursive', duration: 90 },
-            // 56-58: Run recursive, walk away
-            { type: 'run_recursive', duration: 120 },
-            // 59-61: Climbing
-            { type: 'leaderboard', place: 7, duration: 60 },
-            { type: 'leaderboard', place: 5, duration: 60 },
-            { type: 'leaderboard', place: 3, duration: 60 },
-            // 62: 1st place!
-            { type: 'leaderboard', place: 1, duration: 90 },
-            // 63: Win dialogue
+            { type: 'boss_leave', duration: 50 },
+            { type: 'get_claude', duration: 100 },
+            { type: 'ai_code', duration: 100 },
+            { type: 'message', text: 'I did it using AI', duration: 80 },
+            { type: 'boss_return', duration: 50 },
+            { type: 'dialogue', speaker: 'BOSS', text: "Great! Check the dashboard. Don't fall behind.", duration: 2500 },
+            { type: 'boss_leave', duration: 50 },
+            { type: 'leaderboard', place: 10, duration: 100 },
+            { type: 'think', speaker: 'PROGRAMMER', text: 'Claude, get me to first place!', duration: 1500 },
+            { type: 'write_loop', duration: 80 },
+            { type: 'run_loop', duration: 100 },
+            { type: 'leaderboard', place: 9, duration: 60 },
+            { type: 'write_recursive', duration: 60 },
+            { type: 'run_recursive', duration: 80 },
+            { type: 'leaderboard', place: 7, duration: 40 },
+            { type: 'leaderboard', place: 5, duration: 40 },
+            { type: 'leaderboard', place: 3, duration: 40 },
+            { type: 'leaderboard', place: 1, duration: 80 },
             { type: 'dialogue', speaker: 'BOSS', text: "You're doing great! Keep it up!", duration: 2000 },
-            // 64: Boss celebrates
-            { type: 'boss_celebrate', duration: 90 },
-            // 65: Infinite clicking
-            { type: 'infinite', duration: 99999 }
+            { type: 'boss_celebrate', duration: 60 },
+            { type: 'infinite', duration: 180 }
         ];
 
-        let currentScene = 0;
-
-        // Drawing functions
         function drawChar(x, y, type, emotion = 'neutral') {
             ctx.fillStyle = '#00ff00';
-
             if (type === 'programmer') {
-                // Head
                 ctx.fillRect(x + 20, y, 24, 20);
-                // Body
                 ctx.fillRect(x + 16, y + 20, 32, 30);
-                // Legs
                 ctx.fillRect(x + 16, y + 50, 12, 25);
                 ctx.fillRect(x + 36, y + 50, 12, 25);
-                // Arms
                 ctx.fillRect(x, y + 22, 16, 8);
                 ctx.fillRect(x + 48, y + 22, 16, 8);
-
-                // Face based on emotion
                 ctx.fillStyle = '#0d0d0d';
                 if (emotion === 'happy') {
                     ctx.fillRect(x + 24, y + 8, 4, 4);
                     ctx.fillRect(x + 36, y + 8, 4, 4);
-                    // Smile
                     ctx.fillRect(x + 26, y + 16, 12, 2);
                 } else if (emotion === 'stressed') {
                     ctx.fillRect(x + 22, y + 6, 6, 3);
                     ctx.fillRect(x + 36, y + 6, 6, 3);
-                    // Frown
                     ctx.fillRect(x + 26, y + 16, 12, 2);
                 } else if (emotion === 'thinking') {
                     ctx.fillRect(x + 24, y + 8, 3, 3);
@@ -318,17 +244,13 @@
                     ctx.fillRect(x + 36, y + 8, 4, 4);
                 }
             } else if (type === 'boss') {
-                // Head
+                ctx.fillStyle = '#00ff00';
                 ctx.fillRect(x + 20, y, 24, 20);
-                // Suit
                 ctx.fillRect(x + 12, y + 20, 40, 35);
-                // Legs
                 ctx.fillRect(x + 16, y + 55, 12, 20);
                 ctx.fillRect(x + 36, y + 55, 12, 20);
-                // Tie
                 ctx.fillStyle = '#ff0000';
                 ctx.fillRect(x + 28, y + 22, 8, 16);
-                // Face
                 ctx.fillStyle = '#0d0d0d';
                 ctx.fillRect(x + 24, y + 6, 6, 4);
                 ctx.fillRect(x + 34, y + 6, 6, 4);
@@ -337,13 +259,11 @@
 
         function drawComputer(x, y) {
             ctx.fillStyle = '#00ff00';
-            // Monitor
             ctx.fillRect(x, y, 80, 50);
             ctx.fillStyle = '#0d0d0d';
             ctx.fillRect(x + 4, y + 4, 72, 42);
             ctx.fillStyle = '#00ff00';
             ctx.fillRect(x + 8, y + 8, 64, 34);
-            // Stand
             ctx.fillStyle = '#00ff00';
             ctx.fillRect(x + 32, y + 50, 16, 12);
             ctx.fillRect(x + 20, y + 62, 40, 4);
@@ -352,285 +272,178 @@
         function drawFile(name, x, y) {
             ctx.fillStyle = '#00ff00';
             ctx.font = '16px VT323';
-            ctx.fillText('📄 ' + name, x, y);
+            ctx.fillText(name, x, y);
         }
 
         function drawMessage(text, x, y) {
             ctx.fillStyle = '#00ff00';
-            ctx.fillRect(x, y, 150, 40);
+            ctx.fillRect(x, y, 180, 45);
             ctx.fillStyle = '#0d0d0d';
             ctx.font = '18px VT323';
-            ctx.fillText(text, x + 10, y + 26);
+            ctx.fillText(text, x + 10, y + 28);
         }
 
         function drawLeaderboard(place) {
             ctx.fillStyle = '#00ff00';
-            ctx.fillRect(250, 50, 300, 250);
+            ctx.fillRect(250, 30, 300, 280);
             ctx.fillStyle = '#0d0d0d';
-            ctx.fillRect(260, 60, 280, 230);
-
+            ctx.fillRect(260, 40, 280, 260);
             ctx.font = '24px VT323';
-            ctx.fillStyle = '#00ff00';
-            ctx.fillText('TOKEN LEADERBOARD', 280, 100);
-
+            ctx.fillText('TOKEN LEADERBOARD', 280, 80);
             const names = ['YOU', 'BOSS', 'JENNY', 'MIKE', 'SARAH', 'TOM', 'LISA', 'JOHN', 'EMMA', 'DAVE'];
             const scores = [place === 1 ? 9999 : (10 - place) * 1000 + 500, 9999, 8500, 7200, 6100, 5500, 4800, 4200, 3500, 2800];
-
             for (let i = 0; i < 10; i++) {
-                const y = 140 + i * 22;
-                if (i + 1 === place) {
-                    ctx.fillStyle = '#ffff00';
-                    ctx.fillText((i + 1) + '. ' + names[i] + '  ' + scores[i], 280, y);
-                } else {
-                    ctx.fillStyle = '#00ff00';
-                    ctx.fillText((i + 1) + '. ' + names[i] + '  ' + scores[i], 280, y);
-                }
+                ctx.fillStyle = (i + 1) === place ? '#ffff00' : '#00ff00';
+                ctx.fillText((i + 1) + '. ' + names[i] + '  ' + scores[i], 280, 115 + i * 22);
             }
-        }
-
-        function drawTerminal() {
-            ctx.fillStyle = '#00ff00';
-            ctx.fillRect(0, 0, 800, 370);
-            ctx.fillStyle = '#0d0d0d';
-            ctx.fillRect(10, 10, 780, 350);
-
-            ctx.fillStyle = '#00ff00';
-            ctx.font = '20px VT323';
-            ctx.fillText('$', 20, 40);
-            ctx.fillRect(35, 30, 400, 2);
         }
 
         function update() {
             frameCount++;
             ctx.fillStyle = '#0d0d0d';
-            ctx.fillRect(0, 0, 800, 370);
-
-            // Floor
+            ctx.fillRect(0, 0, 800, 360);
             ctx.fillStyle = '#002200';
-            ctx.fillRect(0, 340, 800, 30);
+            ctx.fillRect(0, 330, 800, 30);
             ctx.fillStyle = '#00ff00';
-            ctx.fillRect(0, 340, 800, 2);
+            ctx.fillRect(0, 330, 800, 2);
 
-            // Process current scene
+            if (currentScene >= scenes.length) {
+                startGame();
+                return;
+            }
+
             const scene = scenes[currentScene];
+            sceneTimer++;
+
+            const sceneFrames = scene.duration / 16;
+
+            // Always draw programmer and computer
+            drawComputer(500, 250);
+            drawChar(programmer.x, programmer.y, 'programmer', programmer.emotion);
 
             if (scene.type === 'walk_in') {
-                programmer.x += 4;
-                if (programmer.x >= programmer.targetX) {
-                    programmer.x = programmer.targetX;
-                    currentScene++;
-                }
-                drawChar(programmer.x, programmer.y, 'programmer');
-                drawComputer(500, 250);
-
+                programmer.x += 5;
+                if (programmer.x >= programmer.targetX) programmer.x = programmer.targetX;
             } else if (scene.type === 'boss_enter') {
-                boss.x -= 5;
-                if (boss.x <= boss.targetX) {
-                    boss.x = boss.targetX;
-                    currentScene++;
+                boss.x -= 6;
+                drawChar(boss.x, boss.y, 'boss');
+            } else if (scene.type === 'think' || scene.type === 'dialogue') {
+                dialogueArea.style.display = 'block';
+                speakerEl.textContent = scene.speaker || '';
+                textEl.textContent = scene.text;
+                if (scene.speaker === 'BOSS') {
+                    drawChar(boss.x, boss.y, 'boss');
+                    programmer.emotion = 'stressed';
+                } else {
+                    programmer.emotion = 'thinking';
                 }
-                drawChar(programmer.x, programmer.y, 'programmer');
-                drawComputer(500, 250);
-                drawChar(boss.x, boss.y, 'boss');
-
-            } else if (scene.type === 'think') {
-                programmer.emotion = 'thinking';
-                drawChar(programmer.x, programmer.y, 'programmer', 'thinking');
-                drawComputer(500, 250);
-                drawChar(boss.x, boss.y, 'boss');
-
-                ctx.fillStyle = '#00ff00';
-                ctx.font = '28px VT323';
-                ctx.fillText(scene.text, programmer.x + 60, programmer.y - 20);
-
+                if (scene.type === 'think' && scene.text.includes('7')) {
+                    ctx.fillStyle = '#00ff00';
+                    ctx.font = '28px VT323';
+                    ctx.fillText('7', programmer.x + 60, programmer.y - 20);
+                }
             } else if (scene.type === 'boss_leave') {
                 boss.x += 6;
-                drawChar(programmer.x, programmer.y, 'programmer', 'stressed');
-                drawComputer(500, 250);
-                if (boss.x > 850) {
-                    boss.state = 'off';
-                    currentScene++;
-                }
-
+                programmer.emotion = 'stressed';
+                if (boss.x > 850) boss.x = 850;
             } else if (scene.type === 'write_code') {
-                drawChar(programmer.x, programmer.y, 'programmer', 'happy');
-                drawComputer(500, 250);
-                drawFile('random_number_generator/', 300, 180);
-                drawFile('random_number_generator.py', 300, 210);
-
+                drawFile('random_number_generator/', 300, 170);
+                drawFile('random_number_generator.py', 300, 200);
             } else if (scene.type === 'message') {
-                drawChar(programmer.x, programmer.y, 'programmer', 'happy');
-                drawComputer(500, 250);
-                drawFile('random_number_generator/', 300, 180);
-                drawFile('random_number_generator.py', 300, 210);
-                drawMessage(scene.text, 450, 150);
-
+                drawFile('random_number_generator.py', 300, 200);
+                drawMessage(scene.text, 450, 140);
+                programmer.emotion = 'happy';
             } else if (scene.type === 'boss_return') {
-                boss.x -= 5;
-                if (boss.x <= boss.targetX) {
-                    boss.x = boss.targetX;
-                    currentScene++;
-                }
-                drawChar(programmer.x, programmer.y, 'programmer', 'stressed');
-                drawComputer(500, 250);
-                drawFile('random_number_generator/', 300, 180);
-                drawFile('random_number_generator.py', 300, 210);
+                boss.x -= 6;
+                if (boss.x <= boss.targetX) boss.x = boss.targetX;
                 drawChar(boss.x, boss.y, 'boss');
-
-            } else if (scene.type === 'dialogue') {
-                dialogueArea.style.display = 'block';
-                speakerEl.textContent = scene.speaker;
-                textEl.textContent = scene.text;
-
-                drawChar(programmer.x, programmer.y, 'programmer', scene.speaker === 'BOSS' ? 'stressed' : 'happy');
-                drawComputer(500, 250);
-                drawChar(boss.x, boss.y, 'boss');
-
-                dialogueTimer += 16;
-                if (dialogueTimer > scene.duration) {
-                    dialogueTimer = 0;
-                    currentScene++;
-                    if (scene.speaker === 'BOSS' && scene.text.includes('dashboard')) {
-                        setTimeout(() => dialogueArea.style.display = 'none', 500);
-                    }
-                }
-
+                programmer.emotion = 'stressed';
             } else if (scene.type === 'get_claude') {
-                programmer.emotion = 'neutral';
-                drawChar(programmer.x, programmer.y, 'programmer');
-                drawComputer(500, 250);
-                drawFile('random_number_generator_v1.py', 300, 210);
-
+                drawFile('random_number_generator_v1.py', 300, 200);
                 ctx.fillStyle = '#00ff00';
                 ctx.font = '20px VT323';
-                ctx.fillText('Downloading Claude Code...', 300, 160);
-
+                ctx.fillText('Downloading Claude Code...', 300, 150);
             } else if (scene.type === 'ai_code') {
-                drawChar(programmer.x, programmer.y, 'programmer');
-                drawComputer(500, 250);
-                drawFile('random_number_generator_v1.py', 260, 180);
-                drawFile('random_number_generator_v2.py', 260, 210);
-                drawFile('uv.lock', 260, 240);
-                drawFile('pyproject.toml', 260, 270);
-
-            } else if (scene.type === 'message_ai') {
-                drawChar(programmer.x, programmer.y, 'programmer', 'happy');
-                drawComputer(500, 250);
-                drawFile('random_number_generator_v2.py', 260, 210);
-                drawMessage(scene.text, 450, 150);
-
+                drawFile('random_number_generator_v1.py', 260, 170);
+                drawFile('random_number_generator_v2.py', 260, 200);
+                drawFile('uv.lock', 260, 230);
+                drawFile('pyproject.toml', 260, 260);
             } else if (scene.type === 'leaderboard') {
-                drawChar(programmer.x, programmer.y, 'programmer');
-                drawComputer(400, 150);
+                drawComputer(400, 130);
                 drawLeaderboard(scene.place);
-
-                if (scene.place === 10) {
-                    programmer.emotion = 'stressed';
-                } else if (scene.place === 1) {
-                    programmer.emotion = 'happy';
-                }
-
+                programmer.emotion = scene.place === 10 ? 'stressed' : (scene.place === 1 ? 'happy' : 'neutral');
             } else if (scene.type === 'write_loop') {
-                drawChar(programmer.x, programmer.y, 'programmer');
-                drawComputer(500, 250);
-                drawFile('loop.py', 280, 200);
+                drawFile('loop.py', 280, 190);
                 ctx.fillStyle = '#00ff00';
                 ctx.font = '16px VT323';
-                ctx.fillText('$ python3 loop.py', 350, 200);
-
+                ctx.fillText('$ python3 loop.py', 350, 190);
             } else if (scene.type === 'run_loop') {
-                drawChar(programmer.x, programmer.y, 'programmer');
-                drawComputer(500, 250);
-                drawFile('loop.py', 280, 200);
-
+                drawFile('loop.py', 280, 190);
                 ctx.fillStyle = '#00ff00';
                 ctx.font = '20px VT323';
-                ctx.fillText('Running...', 350, 180);
-
-                // Tokens going up
-                tokens += 10;
-                ctx.font = '28px VT323';
-                ctx.fillText('TOKENS: ' + tokens, 350, 220);
-
+                ctx.fillText('Running...', 350, 170);
+                tokens = Math.min(999, tokens + 5);
+                ctx.fillText('TOKENS: ' + tokens, 350, 210);
             } else if (scene.type === 'write_recursive') {
-                drawChar(programmer.x, programmer.y, 'programmer');
-                drawComputer(500, 250);
-                drawFile('loop.py', 280, 180);
-                drawFile('recursive_loop.py', 280, 210);
-
+                drawFile('loop.py', 280, 170);
+                drawFile('recursive_loop.py', 280, 200);
             } else if (scene.type === 'run_recursive') {
-                drawChar(programmer.x, programmer.y, 'programmer');
-                drawComputer(500, 250);
-
-                tokens += 50;
+                tokens = Math.min(9999, tokens + 30);
                 ctx.fillStyle = '#00ff00';
                 ctx.font = '28px VT323';
-                ctx.fillText('TOKENS: ' + tokens, 350, 200);
+                ctx.fillText('TOKENS: ' + tokens, 350, 180);
                 ctx.font = '20px VT323';
-                ctx.fillText('Running recursive loop...', 350, 240);
-
+                ctx.fillText('Running recursive loop...', 350, 220);
             } else if (scene.type === 'boss_celebrate') {
+                drawChar(boss.x, boss.y + Math.sin(frameCount * 0.2) * 5, 'boss');
                 programmer.emotion = 'happy';
-                drawChar(programmer.x, programmer.y, 'programmer', 'happy');
-                drawComputer(500, 250);
-                drawChar(boss.x, boss.y, 'boss');
-
-                // Bounce boss
-                boss.y = 240 + Math.sin(frameCount * 0.3) * 10;
-
             } else if (scene.type === 'infinite') {
-                drawChar(programmer.x, programmer.y, 'programmer', 'happy');
-                drawComputer(500, 250);
-
-                tokens += Math.floor(Math.random() * 100) + 10;
-
+                programmer.emotion = 'happy';
+                tokens += Math.floor(Math.random() * 50) + 20;
                 ctx.fillStyle = '#00ff00';
                 ctx.font = '32px VT323';
-                ctx.fillText('TOKENS: ' + tokens, 300, 150);
-
-                // Click effect
-                if (frameCount % 10 === 0) {
-                    ctx.fillStyle = '#00ff00';
-                    ctx.fillRect(450 + Math.random() * 100, 200 + Math.random() * 50, 4, 4);
+                ctx.fillText('TOKENS: ' + tokens, 300, 130);
+                if (frameCount % 5 === 0) {
+                    ctx.fillRect(480 + Math.random() * 80, 180 + Math.random() * 40, 4, 4);
                 }
+            }
 
-                if (frameCount > 180) {
-                    // Move to game
-                    setTimeout(startGame, 1000);
-                    return;
+            // Check if scene is done
+            if (sceneTimer > sceneFrames) {
+                sceneTimer = 0;
+                currentScene++;
+                if (scene.type !== 'dialogue' && scene.type !== 'think') {
+                    dialogueArea.style.display = 'none';
+                }
+                if (scene.type === 'dialogue') {
+                    dialogueArea.style.display = 'none';
                 }
             }
 
             requestAnimationFrame(update);
         }
 
-        // Gameplay
         function startGame() {
             cutscene.style.display = 'none';
+            dialogueArea.style.display = 'none';
             gameplay.style.display = 'block';
             gameRunning = true;
             tokens = 0;
             obstacles = [];
-            player.y = 300;
+            player.y = 280;
             player.vy = 0;
             gpLoop();
         }
 
         function spawnObstacle() {
-            obstacles.push({
-                x: 800,
-                y: 312,
-                width: 24,
-                height: 24,
-                speed: 4 + Math.random() * 3
-            });
+            obstacles.push({ x: 800, y: 296, width: 24, height: 24, speed: 4 + Math.random() * 3 });
         }
 
         function updateGame() {
             frameCount++;
             obstacleTimer++;
 
-            if (obstacleTimer > 60 + Math.random() * 60) {
+            if (obstacleTimer > 50 + Math.random() * 50) {
                 spawnObstacle();
                 obstacleTimer = 0;
             }
@@ -639,18 +452,18 @@
             obstacles = obstacles.filter(obs => obs.x > -50);
 
             if (!player.grounded) {
-                player.vy += 0.5;
+                player.vy += 0.6;
                 player.y += player.vy;
             }
 
-            if (player.y >= 300) {
-                player.y = 300;
+            if (player.y >= 280) {
+                player.y = 280;
                 player.vy = 0;
                 player.grounded = true;
             }
 
             obstacles.forEach(obs => {
-                if (player.x < obs.x + obs.width && player.x + 32 > obs.x &&
+                if (player.x < obs.x + obs.width && player.x + 28 > obs.x &&
                     player.y < obs.y + obs.height && player.y + 48 > obs.y) {
                     gameRunning = false;
                     finalScoreEl.textContent = tokens;
@@ -664,46 +477,36 @@
 
         function drawGame() {
             gpCtx.fillStyle = '#0d0d0d';
-            gpCtx.fillRect(0, 0, 800, 370);
-
-            // Stars
+            gpCtx.fillRect(0, 0, 800, 360);
             gpCtx.fillStyle = '#004400';
             for (let i = 0; i < 30; i++) {
-                gpCtx.fillRect((i * 73 + frameCount * 0.1) % 800, (i * 37) % 200, 2, 2);
+                gpCtx.fillRect((i * 73 + frameCount * 0.1) % 800, (i * 37) % 180, 2, 2);
             }
-
-            // Floor
             gpCtx.fillStyle = '#002200';
-            gpCtx.fillRect(0, 348, 800, 22);
+            gpCtx.fillRect(0, 328, 800, 32);
             gpCtx.fillStyle = '#00ff00';
-            gpCtx.fillRect(0, 348, 800, 2);
+            gpCtx.fillRect(0, 328, 800, 2);
 
             // Player
-            drawCharGP(player.x, player.y, 'programmer');
+            gpCtx.fillStyle = '#00ff00';
+            gpCtx.fillRect(player.x + 20, player.y, 24, 20);
+            gpCtx.fillRect(player.x + 16, player.y + 20, 32, 28);
+            gpCtx.fillRect(player.x + 16, player.y + 48, 12, 24);
+            gpCtx.fillRect(player.x + 36, player.y + 48, 12, 24);
+            gpCtx.fillRect(player.x, player.y + 22, 16, 8);
+            gpCtx.fillRect(player.x + 48, player.y + 22, 16, 8);
+            gpCtx.fillStyle = '#0d0d0d';
+            gpCtx.fillRect(player.x + 24, player.y + 6, 4, 4);
+            gpCtx.fillRect(player.x + 36, player.y + 6, 4, 4);
 
             // Obstacles
             obstacles.forEach(obs => {
                 gpCtx.fillStyle = '#ff0000';
                 gpCtx.fillRect(obs.x, obs.y, obs.width, obs.height);
-                // Eyes
                 gpCtx.fillStyle = '#ffff00';
                 gpCtx.fillRect(obs.x + 4, obs.y + 4, 4, 4);
                 gpCtx.fillRect(obs.x + 14, obs.y + 4, 4, 4);
             });
-        }
-
-        function drawCharGP(x, y, type) {
-            gpCtx.fillStyle = '#00ff00';
-            gpCtx.fillRect(x + 20, y, 24, 20);
-            gpCtx.fillRect(x + 16, y + 20, 32, 28);
-            gpCtx.fillRect(x + 16, y + 48, 12, 24);
-            gpCtx.fillRect(x + 36, y + 48, 12, 24);
-            gpCtx.fillRect(x, y + 22, 16, 8);
-            gpCtx.fillRect(x + 48, y + 22, 16, 8);
-
-            gpCtx.fillStyle = '#0d0d0d';
-            gpCtx.fillRect(x + 24, y + 6, 4, 4);
-            gpCtx.fillRect(x + 36, y + 6, 4, 4);
         }
 
         function gpLoop() {
@@ -720,7 +523,6 @@
             }
         }
 
-        // Events
         skipBtn.addEventListener('click', startGame);
         restartBtn.addEventListener('click', () => {
             gameOver.style.display = 'none';
@@ -736,7 +538,6 @@
 
         document.getElementById('game').addEventListener('click', jump);
 
-        // Start
         update();
     </script>
 </body>
