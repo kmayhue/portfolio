@@ -14,7 +14,7 @@
         <button id="modeBtn" onclick="toggleMode()">mode: terminal</button>
     </div>
 
-    <div class="terminal" id="terminal" style="display: none;">
+    <div class="terminal" id="terminal">
         <div class="output" id="output"></div>
         <div class="input-line">
             <span class="prompt">kenny@portfolio:~$</span>
@@ -22,7 +22,7 @@
         </div>
     </div>
 
-    <div class="gui" id="gui">
+    <div class="gui" id="gui" style="display: none;">
         <nav class="gui-nav">
             <a href="#" onclick="showGuiFile('about')">About</a>
             <a href="#" onclick="showGuiFile('projects')">Projects</a>

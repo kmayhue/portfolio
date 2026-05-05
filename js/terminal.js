@@ -1,6 +1,6 @@
 // Terminal Portfolio - Kenny
 // Mode: terminal or gui
-let currentMode = 'gui';
+let currentMode = 'terminal';
 let currentDir = '~';
 let commandHistory = [];
 let historyIndex = -1;
@@ -52,12 +52,9 @@ const directories = ['~', 'archive'];
 
 // Initial message
 window.onload = function() {
-    // Start in GUI mode by default
-    document.getElementById('terminal').style.display = 'none';
-    document.getElementById('gui').style.display = 'block';
-    document.getElementById('modeBtn').textContent = 'mode: gui';
-    // Show default page
-    showGuiFile('about');
+    printOutput('Welcome to kenny@portfolio', 'result');
+    printOutput('Type "kenny-cli -help" to get started', 'result');
+    document.getElementById('commandInput').focus();
 };
 
 function toggleMode() {
