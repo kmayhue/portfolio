@@ -5,55 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resume - Kenny</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <nav>
-            <div class="logo">Kenny</div>
-            <ul class="nav-links">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="projects.html">Projects</a></li>
-                <li><a href="resume.html" class="active">Resume</a></li>
-                <li><a href="contact.html">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
+    <div class="container">
+        <header>
+            <div class="window-title">~/portfolio/resume.html</div>
+            <nav>
+                <a href="index.html">[index.html]</a>
+                <a href="projects.html">[projects.html]</a>
+                <a href="resume.html">[resume.html]</a>
+                <a href="contact.html">[contact.html]</a>
+            </nav>
+        </header>
 
-    <main>
-        <section class="page-header">
-            <h1>Resume</h1>
-        </section>
+        <main>
+            <section class="page-header">
+                <h1>Resume</h1>
+            </section>
 
-        <section class="resume-content">
-            <div class="resume-section">
+            <section>
                 <h2>Experience</h2>
-                <div class="job">
+
+                <article class="job">
                     <h3>Senior Data Engineer</h3>
                     <p class="company">1099 Contract</p>
-                    <p class="dates">Present - 2 months left</p>
-                    <p class="description">Data engineering work with Python and SQL</p>
-                </div>
-            </div>
+                    <p class="dates">Present · 2 months remaining</p>
+                    <p>Data engineering work with Python and SQL</p>
+                </article>
 
-            <div class="resume-section">
+                <p style="color: var(--comment); margin-top: 1rem;">
+                    → More experience coming soon
+                </p>
+            </section>
+
+            <section>
                 <h2>Skills</h2>
-                <ul class="skills-list">
-                    <li>Python</li>
-                    <li>SQL</li>
-                    <li>Data Engineering</li>
-                    <li>ETL Pipelines</li>
-                </ul>
-            </div>
+                <div class="skills">
+                    <span class="skill">Python</span>
+                    <span class="skill">SQL</span>
+                    <span class="skill">Data Engineering</span>
+                    <span class="skill">ETL Pipelines</span>
+                    <span class="skill">SQLAlchemy</span>
+                    <span class="skill">Pandas</span>
+                </div>
+            </section>
 
-            <div class="resume-section">
+            <section>
                 <h2>Education</h2>
-                <p>Degree info coming soon</p>
-            </div>
-        </section>
-    </main>
+                <p>→ Coming soon</p>
+            </section>
+        </main>
 
-    <footer>
-        <p>&copy; 2026 Kenny. Built with HTML & CSS.</p>
-    </footer>
+        <footer>
+            <div class="status-line">
+                <span>resume.html</span>
+                <span>55 lines</span>
+                <span>kenny@dev</span>
+            </div>
+        </footer>
+    </div>
 </body>
 </html>

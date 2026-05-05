@@ -5,50 +5,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projects - Kenny</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <nav>
-            <div class="logo">Kenny</div>
-            <ul class="nav-links">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="projects.html" class="active">Projects</a></li>
-                <li><a href="resume.html">Resume</a></li>
-                <li><a href="contact.html">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
+    <div class="container">
+        <header>
+            <div class="window-title">~/portfolio/projects.html</div>
+            <nav>
+                <a href="index.html">[index.html]</a>
+                <a href="projects.html">[projects.html]</a>
+                <a href="resume.html">[resume.html]</a>
+                <a href="contact.html">[contact.html]</a>
+            </nav>
+        </header>
 
-    <main>
-        <section class="page-header">
-            <h1>My Projects</h1>
-            <p>Things I've built along the way</p>
-        </section>
+        <main>
+            <section class="page-header">
+                <h1>Projects</h1>
+                <p>Things I've built along the way</p>
+            </section>
 
-        <section class="projects-grid">
-            <article class="project-card">
-                <h3>Cover Letter Generator</h3>
-                <p>Tool to automate and customize cover letters for job applications</p>
-                <div class="tech-stack">
-                    <span>Python</span>
-                </div>
-                <a href="https://github.com/kmayhue/cover_letter_generator" target="_blank" class="project-link">View on GitHub</a>
-            </article>
+            <section>
+                <article class="project">
+                    <h3>Cover Letter Generator</h3>
+                    <p>Tool to automate and customize cover letters for job applications</p>
+                    <p class="tech">Python</p>
+                    <p><a href="https://github.com/kmayhue/cover_letter_generator" target="_blank">→ View on GitHub</a></p>
+                </article>
 
-            <article class="project-card">
-                <h3>Portfolio Website</h3>
-                <p>This website - built with plain HTML & CSS as a learning project</p>
-                <div class="tech-stack">
-                    <span>HTML</span>
-                    <span>CSS</span>
-                </div>
-                <a href="https://github.com/kmayhue/portfolio" target="_blank" class="project-link">View on GitHub</a>
-            </article>
-        </section>
-    </main>
+                <article class="project">
+                    <h3>Portfolio Website</h3>
+                    <p>This website - built with plain HTML & CSS as a learning project</p>
+                    <p class="tech">HTML • CSS</p>
+                    <p><a href="https://github.com/kmayhue/portfolio" target="_blank">→ View on GitHub</a></p>
+                </article>
 
-    <footer>
-        <p>&copy; 2026 Kenny. Built with HTML & CSS.</p>
-    </footer>
+                <article class="project">
+                    <h3>Tome (This Agent)</h3>
+                    <p>My AI assistant with memory system - built with Python and SQLite</p>
+                    <p class="tech">Python • SQLite</p>
+                    <p><a href="https://github.com/kmayhue/agent" target="_blank">→ View on GitHub</a></p>
+                </article>
+            </section>
+        </main>
+
+        <footer>
+            <div class="status-line">
+                <span>projects.html</span>
+                <span>3 files</span>
+                <span>kenny@dev</span>
+            </div>
+        </footer>
+    </div>
 </body>
 </html>
