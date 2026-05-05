@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>slopcannon.com</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Press Start 2P', monospace;
+            overflow: hidden;
+        }
+
+        #game {
+            position: relative;
+            width: 800px;
+            height: 400px;
+            background: #1a1a2e;
+            border: 4px solid #333;
+            image-rendering: pixelated;
+        }
+
+        #cutscene {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #1a1a2e;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        #dialogue-box {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 700px;
+            background: #000;
+            border: 3px solid #fff;
+            padding: 15px;
+            color: #fff;
+            font-size: 12px;
+            line-height: 1.8;
+            display: none;
+        }
+
+        #speaker {
+            color: #0f0;
+            margin-bottom: 8px;
+            font-size: 10px;
+        }
+
+        #skip-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #333;
+            color: #fff;
+            border: 2px solid #666;
+            padding: 8px 12px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 8px;
+            cursor: pointer;
+            z-index: 101;
+        }
+
+        #skip-btn:hover {
+            background: #555;
+        }
+
+        #game-canvas {
+            display: none;
+        }
+
+        #score {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #0f0;
+            font-size: 12px;
+        }
+
+        #game-over {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+        }
+
+        #game-over h1 {
+            color: #f00;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        #game-over p {
+            color: #fff;
+            font-size: 12px;
+            margin-bottom: 30px;
+        }
+
+        #restart-btn {
+            background: #0f0;
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        #instructions {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #666;
+            font-size: 8px;
+        }
+
+        .pixel {
+            image-rendering: pixelated;
+        }
+    </style>
+</head>
+<body>
+    <div id="game">
+        <button id="skip-btn">SKIP >></button>
+
+        <div id="cutscene">
+            <canvas id="cutscene-canvas" width="800" height="400"></canvas>
+            <div id="dialogue-box">
+                <div id="speaker"></div>
+                <div id="text"></div>
+            </div>
+        </div>
+
+        <canvas id="game-canvas" width="800" height="400"></canvas>
+        <div id="score">TOKENS: 0</div>
+        <div id="instructions">SPACE to jump</div>
+
+        <div id="game-over">
+            <h1>GAME OVER</h1>
+            <p>Final Tokens: <span id="final-score">0</span></p>
+            <button id="restart-btn">PLAY AGAIN</button>
+        </div>
+    </div>
+
+    <script>
+        const game = document.getElementById('game');
+        const cutscene = document.getElementById('cutscene');
+        const dialogueBox = document.getElementById('dialogue-box');
+        const speakerEl = document.getElementById('speaker');
+        const textEl = document.getElementById('text');
+        const skipBtn = document.getElementById('skip-btn');
+        const gameCanvas = document.getElementById('game-canvas');
+        const ctx = gameCanvas.getContext('2d');
+        const scoreEl = document.getElementById('score');
+        const gameOver = document.getElementById('game-over');
+        const finalScoreEl = document.getElementById('final-score');
+        const restartBtn = document.getElementById('restart-btn');
+
+        const cutsceneCanvas = document.getElementById('cutscene-canvas');
+        const csCtx = cutsceneCanvas.getContext('2d');
+
+        // Game state
+        let gameStarted = false;
+        let tokens = 0;
+        let gameRunning = false;
+        let frameCount = 0;
+
+        // Player
+        const player = {
+            x: 100,
+            y: 300,
+            width: 32,
+            height: 48,
+            vy: 0,
+            grounded: true,
+            jumpPower: -12,
+            color: '#00ff00'
+        };
+
+        // Obstacles
+        let obstacles = [];
+        let obstacleTimer = 0;
+
+        // Cutscene data
+        const scenes = [
+            { speaker: 'BOSS', text: 'Think of a number between 1 and 10.', duration: 2000 },
+            { speaker: 'PROGRAMMER', text: '7.', duration: 1500 },
+            { speaker: 'BOSS', text: 'Great. Now automate that.', duration: 2000 },
+            { speaker: '', text: '(The programmer sits down and writes code...)', duration: 2500 },
+            { speaker: 'PROGRAMMER', text: 'Done! A simple Python program.', duration: 2000 },
+            { speaker: 'BOSS', text: "You're not using enough tokens!", duration: 2000 },
+            { speaker: '', text: '(The programmer downloads Claude Code...)', duration: 2500 },
+            { speaker: 'PROGRAMMER', text: 'Prompting AI to maximize tokens...', duration: 2000 },
+            { speaker: '', text: '(Many files appear with uv dependencies...)', duration: 2500 },
+            { speaker: 'PROGRAMMER', text: 'I did it using AI!', duration: 2000 },
+            { speaker: 'BOSS', text: "Great! Check the token dashboard. Don't fall behind.", duration: 2500 },
+            { speaker: '', text: '(The programmer sees they are in last place...)', duration: 2500 },
+            { speaker: 'PROGRAMMER', text: 'Claude, get me to first place!', duration: 2000 },
+            { speaker: '', text: '(Claude writes a loop.py that runs the generator forever...)', duration: 3000 },
+            { speaker: '', text: '(The programmer walks away. The tokens keep climbing...)', duration: 3000 },
+            { speaker: '', text: '1st Place! Time to play forever!', duration: 2500 },
+            { speaker: '', text: 'Now its your turn...', duration: 2000 }
+        ];
+
+        let currentScene = 0;
+        let sceneTimer = 0;
+
+        // Pixel art drawing functions
+        function drawPixel(ctx, x, y, color, pixels) {
+            ctx.fillStyle = color;
+            pixels.forEach(([px, py]) => {
+                ctx.fillRect(x + px * 4, y + py * 4, 4, 4);
+            });
+        }
+
+        function drawProgrammer(ctx, x, y, frame = 0) {
+            // Body
+            ctx.fillStyle = '#4488ff';
+            ctx.fillRect(x + 8, y + 16, 16, 16);
+
+            // Head
+            ctx.fillStyle = '#ffccaa';
+            ctx.fillRect(x + 8, y + 4, 16, 12);
+
+            // Hair
+            ctx.fillStyle = '#442200';
+            ctx.fillRect(x + 8, y, 16, 6);
+
+            // Legs (animated)
+            ctx.fillStyle = '#333';
+            if (frame % 20 < 10) {
+                ctx.fillRect(x + 8, y + 32, 6, 12);
+                ctx.fillRect(x + 18, y + 32, 6, 12);
+            } else {
+                ctx.fillRect(x + 6, y + 32, 6, 12);
+                ctx.fillRect(x + 20, y + 32, 6, 12);
+            }
+
+            // Arms
+            ctx.fillStyle = '#ffccaa';
+            ctx.fillRect(x, y + 18, 8, 6);
+            ctx.fillRect(x + 24, y + 18, 8, 6);
+
+            // Glasses
+            ctx.fillStyle = '#000';
+            ctx.fillRect(x + 10, y + 8, 4, 2);
+            ctx.fillRect(x + 18, y + 8, 4, 2);
+        }
+
+        function drawBoss(ctx, x, y) {
+            // Suit
+            ctx.fillStyle = '#333';
+            ctx.fillRect(x + 4, y + 16, 24, 20);
+
+            // Head
+            ctx.fillStyle = '#ffccaa';
+            ctx.fillRect(x + 8, y + 2, 16, 14);
+
+            // Tie
+            ctx.fillStyle = '#f00';
+            ctx.fillRect(x + 14, y + 18, 4, 12);
+
+            // Legs
+            ctx.fillStyle = '#222';
+            ctx.fillRect(x + 6, y + 36, 8, 12);
+            ctx.fillRect(x + 18, y + 36, 8, 12);
+        }
+
+        function drawComputer(ctx, x, y) {
+            // Monitor
+            ctx.fillStyle = '#444';
+            ctx.fillRect(x, y, 32, 24);
+            ctx.fillStyle = '#0ff';
+            ctx.fillRect(x + 2, y + 2, 28, 20);
+
+            // Stand
+            ctx.fillStyle = '#333';
+            ctx.fillRect(x + 12, y + 24, 8, 6);
+            ctx.fillRect(x + 8, y + 30, 16, 4);
+
+            // Desk
+            ctx.fillStyle = '#654321';
+            ctx.fillRect(x - 4, y + 32, 40, 4);
+        }
+
+        function drawBug(ctx, x, y) {
+            // Body
+            ctx.fillStyle = '#f00';
+            ctx.fillRect(x + 4, y + 4, 16, 12);
+
+            // Head
+            ctx.fillStyle = '#800000';
+            ctx.fillRect(x, y + 6, 6, 8);
+
+            // Legs
+            ctx.fillStyle = '#f00';
+            ctx.fillRect(x + 2, y, 2, 4);
+            ctx.fillRect(x + 8, y, 2, 4);
+            ctx.fillRect(x + 14, y, 2, 4);
+            ctx.fillRect(x + 2, y + 16, 2, 4);
+            ctx.fillRect(x + 8, y + 16, 2, 4);
+            ctx.fillRect(x + 14, y + 16, 2, 4);
+
+            // Eyes
+            ctx.fillStyle = '#ff0';
+            ctx.fillRect(x + 1, y + 7, 2, 2);
+            ctx.fillRect(x + 3, y + 7, 2, 2);
+        }
+
+        function drawCloud(ctx, x, y) {
+            ctx.fillStyle = '#333355';
+            ctx.fillRect(x, y, 40, 16);
+            ctx.fillRect(x + 8, y - 8, 24, 8);
+            ctx.fillRect(x - 4, y + 4, 12, 8);
+            ctx.fillRect(x + 32, y + 4, 12, 8);
+        }
+
+        // Draw cutscene
+        function drawCutscene() {
+            csCtx.fillStyle = '#1a1a2e';
+            csCtx.fillRect(0, 0, 800, 400);
+
+            // Floor
+            csCtx.fillStyle = '#333';
+            csCtx.fillRect(0, 350, 800, 50);
+
+            const time = Math.floor(frameCount / 60);
+
+            if (currentScene < 6) {
+                // Scene 1-5: Programmer at desk
+                drawComputer(csCtx, 500, 280);
+                drawProgrammer(csCtx, 450, 300, frameCount);
+
+                if (currentScene < 3) {
+                    drawBoss(csCtx, 100, 290);
+                }
+
+                if (currentScene >= 3 && currentScene < 5) {
+                    // Show file
+                    csCtx.fillStyle = '#0f0';
+                    csCtx.font = '10px "Press Start 2P"';
+                    csCtx.fillText('random_number_generator.py', 460, 260);
+                }
+
+                if (currentScene >= 5) {
+                    // Show AI files
+                    csCtx.fillStyle = '#0f0';
+                    csCtx.font = '8px "Press Start 2P"';
+                    csCtx.fillText('v1.py', 440, 250);
+                    csCtx.fillText('v2.py', 440, 265);
+                    csCtx.fillText('uv_*.txt', 440, 280);
+                }
+            } else if (currentScene < 10) {
+                // Scene 6-9: Dashboard
+                drawComputer(csCtx, 350, 250);
+
+                // Fake dashboard
+                csCtx.fillStyle = '#0ff';
+                csCtx.fillRect(360, 260, 150, 100);
+                csCtx.fillStyle = '#000';
+                csCtx.font = '8px "Press Start 2P"';
+                csCtx.fillText('LEADERBOARD', 365, 275);
+                csCtx.fillText('1. BOSS    999', 365, 290);
+                csCtx.fillText('2. JENNY  888', 365, 305);
+                csCtx.fillText('3. MIKE   777', 365, 320);
+                csCtx.fillStyle = '#f00';
+                csCtx.fillText('10. YOU     0', 365, 335);
+
+                drawProgrammer(csCtx, 300, 300, frameCount);
+            } else if (currentScene < 13) {
+                // Scene 10-12: AI magic
+                drawComputer(csCtx, 400, 250);
+
+                csCtx.fillStyle = '#0f0';
+                csCtx.font = '8px "Press Start 2P"';
+                csCtx.fillText('loop.py', 420, 230);
+                csCtx.fillText('recursive.py', 420, 245);
+
+                // Token counter going up
+                csCtx.fillStyle = '#0f0';
+                csCtx.font = '12px "Press Start 2P"';
+                csCtx.fillText('TOKENS: ' + (tokens), 420, 300);
+                tokens = Math.min(9999, tokens + 10);
+
+                drawProgrammer(csCtx, 350, 300, frameCount);
+            } else {
+                // Final: Start game
+                drawProgrammer(csCtx, 380, 300, frameCount);
+            }
+
+            // Clouds
+            drawCloud(csCtx, 100 - (frameCount * 0.5) % 500, 50);
+            drawCloud(csCtx, 400 - (frameCount * 0.3) % 500, 80);
+        }
+
+        function showDialogue() {
+            if (currentScene >= scenes.length) {
+                startGame();
+                return;
+            }
+
+            const scene = scenes[currentScene];
+            dialogueBox.style.display = 'block';
+            speakerEl.textContent = scene.speaker;
+            textEl.textContent = scene.text;
+
+            sceneTimer = scene.duration;
+        }
+
+        function updateCutscene() {
+            frameCount++;
+            sceneTimer -= 16;
+
+            if (sceneTimer <= 0) {
+                currentScene++;
+                if (currentScene < scenes.length) {
+                    showDialogue();
+                } else {
+                    startGame();
+                }
+            }
+
+            drawCutscene();
+            requestAnimationFrame(updateCutscene);
+        }
+
+        function startGame() {
+            cutscene.style.display = 'none';
+            gameCanvas.style.display = 'block';
+            gameRunning = true;
+            tokens = 0;
+            obstacles = [];
+            player.y = 300;
+            player.vy = 0;
+
+            gameLoop();
+        }
+
+        function spawnObstacle() {
+            obstacles.push({
+                x: 800,
+                y: 312,
+                width: 24,
+                height: 20,
+                speed: 5 + Math.random() * 3
+            });
+        }
+
+        function updateGame() {
+            frameCount++;
+
+            // Spawn obstacles
+            obstacleTimer++;
+            if (obstacleTimer > 80 + Math.random() * 60) {
+                spawnObstacle();
+                obstacleTimer = 0;
+            }
+
+            // Update obstacles
+            obstacles.forEach(obs => {
+                obs.x -= obs.speed;
+            });
+            obstacles = obstacles.filter(obs => obs.x > -50);
+
+            // Player physics
+            if (!player.grounded) {
+                player.vy += 0.6;
+                player.y += player.vy;
+            }
+
+            if (player.y >= 300) {
+                player.y = 300;
+                player.vy = 0;
+                player.grounded = true;
+            }
+
+            // Collision
+            obstacles.forEach(obs => {
+                if (player.x < obs.x + obs.width &&
+                    player.x + player.width > obs.x &&
+                    player.y < obs.y + obs.height &&
+                    player.y + player.height > obs.y) {
+                    endGame();
+                }
+            });
+
+            // Score
+            tokens++;
+            scoreEl.textContent = 'TOKENS: ' + tokens;
+        }
+
+        function drawGame() {
+            // Background
+            ctx.fillStyle = '#1a1a2e';
+            ctx.fillRect(0, 0, 800, 400);
+
+            // Stars
+            ctx.fillStyle = '#fff';
+            for (let i = 0; i < 50; i++) {
+                const sx = (i * 137 + frameCount * 0.1) % 800;
+                const sy = (i * 73) % 200;
+                ctx.fillRect(sx, sy, 2, 2);
+            }
+
+            // Floor
+            ctx.fillStyle = '#333';
+            ctx.fillRect(0, 348, 800, 52);
+
+            // Ground line
+            ctx.fillStyle = '#0f0';
+            ctx.fillRect(0, 348, 800, 2);
+
+            // Player
+            drawProgrammer(ctx, player.x, player.y, frameCount);
+
+            // Obstacles
+            obstacles.forEach(obs => {
+                drawBug(ctx, obs.x, obs.y);
+            });
+        }
+
+        function gameLoop() {
+            if (!gameRunning) return;
+
+            updateGame();
+            drawGame();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function endGame() {
+            gameRunning = false;
+            finalScoreEl.textContent = tokens;
+            gameOver.style.display = 'flex';
+        }
+
+        function jump() {
+            if (player.grounded && gameRunning) {
+                player.vy = player.jumpPower;
+                player.grounded = false;
+            }
+        }
+
+        // Event listeners
+        skipBtn.addEventListener('click', () => {
+            startGame();
+        });
+
+        restartBtn.addEventListener('click', () => {
+            gameOver.style.display = 'none';
+            startGame();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                if (gameRunning) {
+                    jump();
+                }
+            }
+        });
+
+        game.addEventListener('click', () => {
+            if (gameRunning) {
+                jump();
+            }
+        });
+
+        // Start cutscene
+        showDialogue();
+        updateCutscene();
+    </script>
+</body>
+</html>

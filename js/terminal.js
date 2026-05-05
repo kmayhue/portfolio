@@ -40,7 +40,13 @@ Let's connect!
 - GitHub: https://github.com/kmayhue
 - Email: mayhuek@gmail.com
 
-Or use the chat command to send me a message directly!`
+Or use the chat command to send me a message directly!`,
+    'game.md': `# Game
+
+Play my game: slopcannon.com
+
+Terminal: curl slopcannon.com
+GUI: Click "Play Game" button`
 };
 
 const directories = ['~', 'archive'];
@@ -74,6 +80,11 @@ function showGuiFile(name) {
 
     if (name === 'projects') {
         content.innerHTML = '<h1>Projects</h1><p>TODO KM - Think of projects to put here</p>';
+        return;
+    }
+
+    if (name === 'game') {
+        content.innerHTML = '<h1>Game</h1><p>Play my game: slopcannon.com</p><a href="slopcannon.html" class="mailto-btn">Play Game</a>';
         return;
     }
 
@@ -135,6 +146,7 @@ function handleCommand(cmd) {
                 printOutput('cd [dir]          Change directory', 'help-cmd');
                 printOutput('cat [file]        View file content', 'help-cmd');
                 printOutput('nvim [file]       Open file in editor', 'help-cmd');
+                printOutput('curl <url>        Fetch URL / play game', 'help-cmd');
                 printOutput('chat              Send me a message', 'help-cmd');
                 printOutput('whoami            About me', 'help-cmd');
                 printOutput('clear             Clear terminal', 'help-cmd');
@@ -177,6 +189,23 @@ function handleCommand(cmd) {
                 viewFile(args[0]);
             } else {
                 printOutput('nvim: missing file operand', 'error');
+            }
+            break;
+
+        case 'curl':
+            if (args[0]) {
+                if (args[0] === 'slopcannon.com') {
+                    printOutput('Downloading slopcannon.com...', 'result');
+                    setTimeout(() => {
+                        printOutput('Download complete!', 'result');
+                        printOutput('Opening game...', 'result');
+                        window.location.href = 'slopcannon.html';
+                    }, 500);
+                } else {
+                    printOutput(`curl: could not resolve host: ${args[0]}`, 'error');
+                }
+            } else {
+                printOutput('curl: missing URL', 'error');
             }
             break;
 
@@ -329,7 +358,7 @@ document.getElementById('commandInput').addEventListener('keydown', function(e) 
                 this.value = parts.join(' ');
             }
         } else {
-            const allCommands = ['kenny-cli', 'ls', 'cd', 'cat', 'nvim', 'chat', 'whoami', 'clear', 'pwd', 'date', 'mkdir'];
+            const allCommands = ['kenny-cli', 'ls', 'cd', 'cat', 'nvim', 'curl', 'chat', 'whoami', 'clear', 'pwd', 'date', 'mkdir'];
             const matches = allCommands.filter(c => c.startsWith(partial));
             if (matches.length === 1) {
                 parts[parts.length - 1] = matches[0];
