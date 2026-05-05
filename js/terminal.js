@@ -104,12 +104,7 @@ function showGuiFile(name) {
         html += `
             <div class="contact-form">
                 <h2>Send me a message</h2>
-                <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
-                    <input type="text" name="name" placeholder="Your Name" required>
-                    <input type="email" name="email" placeholder="Email (optional)">
-                    <textarea name="message" placeholder="Your Message" rows="4" required></textarea>
-                    <button type="submit">Send</button>
-                </form>
+                <a href="mailto:kenny@example.com" class="mailto-btn">Open Email Client</a>
             </div>`;
     }
 
@@ -154,6 +149,7 @@ function handleCommand(cmd) {
                 printOutput('clear             Clear terminal', 'help-cmd');
                 printOutput('pwd               Current directory', 'help-cmd');
                 printOutput('date              Show current date', 'help-cmd');
+                printOutput('mkdir <dir>       Create directory', 'help-cmd');
                 printOutput('kenny-cli --gui   Switch to GUI mode', 'help-cmd');
             } else if (args[0] === '--gui') {
                 toggleMode();
@@ -214,6 +210,19 @@ function handleCommand(cmd) {
             printOutput(new Date().toString(), 'result');
             break;
 
+        case 'mkdir':
+            if (args[0]) {
+                if (!directories.includes(args[0])) {
+                    directories.push(args[0]);
+                    printOutput('', 'result');
+                } else {
+                    printOutput(`mkdir: cannot create directory '${args[0]}': Directory already exists`, 'error');
+                }
+            } else {
+                printOutput('mkdir: missing operand', 'error');
+            }
+            break;
+
         case '':
             break;
 
@@ -224,7 +233,9 @@ function handleCommand(cmd) {
 
 function listFiles() {
     if (currentDir === '~') {
-        printOutput('about.txt  projects.md  resume.txt  contact.md', 'result');
+        const dirs = directories.filter(d => d !== '~').join('  ');
+        const files_list = Object.keys(files).join('  ');
+        printOutput(files_list + (dirs ? '  ' + dirs : ''), 'result');
     } else if (currentDir === 'projects') {
         printOutput('cover_letter/  portfolio/  agent/', 'dir');
     } else if (currentDir === 'archive') {
@@ -283,7 +294,10 @@ function handleChatInput(input) {
         printOutput(`Email: ${chatState.data.email || '(none)'}`, 'result');
         printOutput(`Message: ${chatState.data.message}`, 'result');
         printOutput('', 'result');
-        printOutput('Message sent! (Formspree integration coming soon)', 'result');
+        const subject = encodeURIComponent('Portfolio Message from ' + chatState.data.name);
+        const body = encodeURIComponent(`Name: ${chatState.data.name}\nEmail: ${chatState.data.email || '(none)'}\n\nMessage:\n${chatState.data.message}`);
+        printOutput('Message sent! Send it to me at: kenny@example.com', 'result');
+        printOutput(`mailto:kenny@example.com?subject=${subject}&body=${body}`, 'result');
 
         chatState = null;
     }
@@ -316,7 +330,7 @@ document.getElementById('commandInput').addEventListener('keydown', function(e) 
         e.preventDefault();
         // Simple tab completion
         const partial = this.value.split(' ').pop();
-        const allCommands = ['kenny-cli', 'ls', 'cd', 'cat', 'nvim', 'chat', 'whoami', 'clear', 'pwd', 'date'];
+        const allCommands = ['kenny-cli', 'ls', 'cd', 'cat', 'nvim', 'chat', 'whoami', 'clear', 'pwd', 'date', 'mkdir'];
         const matches = allCommands.filter(c => c.startsWith(partial));
         if (matches.length === 1) {
             this.value = this.value.replace(partial, matches[0]);

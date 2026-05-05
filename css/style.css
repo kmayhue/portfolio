@@ -181,6 +181,21 @@ a:hover {
     max-width: 400px;
 }
 
+.mailto-btn {
+    display: inline-block;
+    background: #00ff00;
+    color: #000;
+    padding: 10px 20px;
+    font-family: 'Fira Code', monospace;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.mailto-btn:hover {
+    background: #00cc00;
+}
+
 .gui-content input,
 .gui-content textarea {
     width: 100%;
