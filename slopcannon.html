@@ -156,13 +156,13 @@
             ['boss_out', 100],      // 5: boss leaves - now programmer sits and works
             ['sit', 40],            // 6: programmer sits
             ['code', 200],          // 7: code appears
-            ['msg', 180, 'I did it!'], // 8: message to boss
+            ['msg', 180],           // 8: message sent to boss
             ['boss_in', 100],       // 9: boss returns
             ['dlog', 280, 'BOSS', "You're not using enough tokens!"],
             ['boss_out', 100],      // 11: boss leaves
             ['claude', 200],        // 12: get claude
             ['ai', 220],            // 13: ai code
-            ['msg', 180, 'I did it using AI'], // 14: message
+            ['msg', 180],           // 14: message sent to boss
             ['boss_in', 100],       // 15: boss returns
             ['dlog', 320, 'BOSS', "Great! Check the dashboard. Don't fall behind."],
             ['boss_out', 100],      // 17: boss leaves
@@ -304,42 +304,6 @@
             ctx.restore();
         }
 
-        function drawBubble(text, x, y) {
-            ctx.fillStyle = '#00ff00';
-            ctx.fillRect(x, y, 220, 50);
-            ctx.fillStyle = '#001100';
-            ctx.font = '20px VT323';
-            ctx.fillText(text, x+10, y+32);
-        }
-
-        function drawBoard(place) {
-            // 5 entries only
-            ctx.fillStyle = '#00ff00';
-            ctx.fillRect(250, 50, 300, 260);
-            ctx.fillStyle = '#001100';
-            ctx.fillRect(260, 60, 280, 240);
-            ctx.font = '24px VT323';
-            ctx.fillStyle = '#00ff00';
-            ctx.fillText('TOKEN LEADERBOARD', 290, 100);
-
-            // 5 people - reverse order so last place is at bottom
-            const names = ['YOU', 'BOSS', 'SARAH', 'MIKE', 'JENNY'];
-            const scores = [place===1?9999:(6-place)*2000+500, 9999, 7500, 5000, 2500];
-
-            for (let i = 0; i < 5; i++) {
-                ctx.fillStyle = (i + 1) === place ? '#ffff00' : '#00ff00';
-                ctx.font = '20px VT323';
-                // Reverse: index 0 = bottom (last place), index 4 = top
-                const yPos = 260 - i * 40;
-                ctx.fillText((i + 1) + '. ' + names[i] + '  ' + scores[i], 280, yPos);
-            }
-        }
-
-        function drawStars() {
-            ctx.fillStyle = '#003300';
-            for (let i = 0; i < 40; i++) ctx.fillRect((i * 97 + frame * 0.2) % 800, (i * 53) % 200, 2, 2);
-        }
-
         function update() {
             frame++;
             ctx.fillStyle = '#0a0a0a';
@@ -382,9 +346,9 @@
                 programmer.emotion = spk === 'BOSS' ? 'stressed' : 'thinking';
             } else if (type === 'code') {
                 drawFileOnScreen(['random_number_generator/', 'random_number_generator.py']);
+                programmer.emotion = 'happy';
             } else if (type === 'msg') {
-                drawFileOnScreen(['random_number_generator.py']);
-                drawBubble(args[0], 280, 100);
+                drawFileOnScreen(['✓ Message sent to boss']);
                 programmer.emotion = 'happy';
             } else if (type === 'claude') {
                 drawFileOnScreen(['random_number_generator_v1.py']);
