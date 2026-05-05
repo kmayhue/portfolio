@@ -53,7 +53,7 @@ const directories = ['~', 'archive'];
 // Initial message
 window.onload = function() {
     printOutput('Welcome to kenny@portfolio', 'result');
-    printOutput('Type "kenny-cli -help" to get started', 'result');
+    printOutput('Type "kenny-cli --help" to get started', 'result');
     document.getElementById('commandInput').focus();
 };
 
@@ -139,8 +139,8 @@ function handleCommand(cmd) {
 
     switch (command) {
         case 'kenny-cli':
-            if (args[0] === '-help' || args[0] === '--help') {
-                printOutput('kenny-cli -help    Show this help menu', 'help-cmd');
+            if (args[0] === '--help') {
+                printOutput('kenny-cli --help   Show this help menu', 'help-cmd');
                 printOutput('ls                List files', 'help-cmd');
                 printOutput('cd [dir]          Change directory', 'help-cmd');
                 printOutput('cat [file]        View file content', 'help-cmd');
@@ -161,7 +161,7 @@ function handleCommand(cmd) {
                     printOutput('Switched to terminal mode', 'result');
                 }
             } else {
-                printOutput('kenny-cli: unknown option. try "kenny-cli -help"', 'error');
+                printOutput('kenny-cli: unknown option. try "kenny-cli --help"', 'error');
             }
             break;
 
