@@ -141,16 +141,15 @@
         const restartBtn = document.getElementById('restart-btn');
 
         let frame = 0, scene = 0, timer = 0, tokens = 0, gameRunning = false;
-        const programmer = { x: -60, y: 230, sitting: false };
-        const boss = { x: 860, y: 220 };
+        const programmer = { x: 50, y: 230, sitting: false };
+        const boss = { x: 700, y: 220 };
         const player = { x: 80, y: 270, vy: 0, grounded: true };
         let obstacles = [], obstacleTimer = 0;
 
         // Story with correct flow
         const story = [
-            ['dlog', 180, 'NARRATOR', 'A programmer walks into work...'],
-            ['walk', 180],           // 1: programmer walks in
-            ['boss_in', 120],       // 2: boss walks in
+            ['walk', 240],           // 0: programmer walks in
+            ['boss_in', 120],        // 1: boss walks in
             ['dlog', 240, 'BOSS', 'Think of a number between 1 and 10'],
             ['dlog', 180, 'PROGRAMMER', '7'],
             ['dlog', 240, 'BOSS', 'Great. Now automate that.'],
@@ -325,7 +324,7 @@
             drawProg(programmer.x, programmer.y, programmer.emotion || 'neutral', programmer.sitting);
 
             if (type === 'walk') {
-                programmer.x = Math.min(programmer.x + 5, 120);
+                programmer.x = Math.min(programmer.x + 4, 180);
             } else if (type === 'sit') {
                 programmer.sitting = true;
             } else if (type === 'boss_in') {
