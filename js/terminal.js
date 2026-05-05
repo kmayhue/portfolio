@@ -1,0 +1,330 @@
+// Terminal Portfolio - Kenny
+// Mode: terminal or gui
+let currentMode = 'terminal';
+let currentDir = '~';
+let commandHistory = [];
+let historyIndex = -1;
+let chatState = null; // null or { step: 'name' | 'email' | 'message', data: {} }
+
+const files = {
+    'about.txt': `Hi, I'm Kenny
+Senior Data Engineer based in Emeryville, CA
+Moving to Walnut Creek in 2 months
+
+I build data pipelines, love Python, and specialize in turning data into insights.
+Currently open to new opportunities.
+
+Skills: Python, SQL, Data Engineering, ETL, Pandas, SQLAlchemy`,
+    'projects.md': `# Projects
+
+1. Cover Letter Generator
+   Tool to automate and customize cover letters for job applications
+   Tech: Python
+   Link: https://github.com/kmayhue/cover_letter_generator
+
+2. Portfolio Website
+   This website - terminal-style portfolio built with HTML/CSS/JS
+   Tech: HTML, CSS, JavaScript
+   Link: https://github.com/kmayhue/portfolio
+
+3. Tome (This Agent)
+   My AI assistant with memory system
+   Tech: Python, SQLite
+   Link: https://github.com/kmayhue/agent`,
+    'resume.txt': `# Resume
+
+EXPERIENCE
+----------
+Senior Data Engineer
+1099 Contract
+Present - 2 months remaining
+
+SKILLS
+------
+Python, SQL, Data Engineering, ETL Pipelines, SQLAlchemy, Pandas
+
+EDUCATION
+---------
+Coming soon`,
+    'contact.md': `# Contact
+
+Let's connect!
+
+- LinkedIn: https://www.linkedin.com/in/kennethmayhue/
+- GitHub: https://github.com/kmayhue
+- Email: kenny@example.com
+
+Or use the chat command to send me a message directly!`
+};
+
+const directories = ['~', 'projects', 'archive'];
+
+// Initial message
+window.onload = function() {
+    printOutput('Welcome to kenny@portfolio', 'result');
+    printOutput('Type "kenny-cli -help" to get started', 'result');
+    document.getElementById('commandInput').focus();
+};
+
+function toggleMode() {
+    currentMode = currentMode === 'terminal' ? 'gui' : 'terminal';
+    const terminal = document.getElementById('terminal');
+    const gui = document.getElementById('gui');
+    const btn = document.getElementById('modeBtn');
+
+    if (currentMode === 'gui') {
+        terminal.classList.add('hidden');
+        gui.style.display = 'block';
+        btn.textContent = 'mode: gui';
+    } else {
+        terminal.classList.remove('hidden');
+        gui.style.display = 'none';
+        btn.textContent = 'mode: terminal';
+    }
+}
+
+function showGuiFile(name) {
+    const content = document.getElementById('guiContent');
+    const guiFiles = {
+        'about': files['about.txt'],
+        'projects': files['projects.md'],
+        'resume': files['resume.txt'],
+        'contact': files['contact.md']
+    };
+
+    let html = guiFiles[name] || 'File not found';
+    // Simple markdown to HTML
+    html = html
+        .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+        .replace(/^- (.+)$/gm, '<p>$1</p>')
+        .replace(/\n/g, '<br>');
+
+    if (name === 'contact') {
+        html += `
+            <div class="contact-form">
+                <h2>Send me a message</h2>
+                <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+                    <input type="text" name="name" placeholder="Your Name" required>
+                    <input type="email" name="email" placeholder="Email (optional)">
+                    <textarea name="message" placeholder="Your Message" rows="4" required></textarea>
+                    <button type="submit">Send</button>
+                </form>
+            </div>`;
+    }
+
+    content.innerHTML = html;
+}
+
+function printOutput(text, className = 'result') {
+    const output = document.getElementById('output');
+    const line = document.createElement('div');
+    line.className = className;
+    line.textContent = text;
+    output.appendChild(line);
+}
+
+function handleCommand(cmd) {
+    const parts = cmd.trim().split(' ');
+    const command = parts[0].toLowerCase();
+    const args = parts.slice(1);
+
+    // Add to history
+    if (cmd.trim()) {
+        commandHistory.push(cmd.trim());
+        historyIndex = commandHistory.length;
+    }
+
+    // Handle chat state
+    if (chatState) {
+        handleChatInput(cmd);
+        return;
+    }
+
+    switch (command) {
+        case 'kenny-cli':
+            if (args[0] === '-help' || args[0] === '--help') {
+                printOutput('kenny-cli -help    Show this help menu', 'help-cmd');
+                printOutput('ls                List files', 'help-cmd');
+                printOutput('cd [dir]          Change directory', 'help-cmd');
+                printOutput('cat [file]        View file content', 'help-cmd');
+                printOutput('nvim [file]       Open file in editor', 'help-cmd');
+                printOutput('chat              Send me a message', 'help-cmd');
+                printOutput('whoami            About me', 'help-cmd');
+                printOutput('clear             Clear terminal', 'help-cmd');
+                printOutput('pwd               Current directory', 'help-cmd');
+                printOutput('date              Show current date', 'help-cmd');
+                printOutput('kenny-cli --gui   Switch to GUI mode', 'help-cmd');
+            } else if (args[0] === '--gui') {
+                toggleMode();
+                if (currentMode === 'gui') {
+                    printOutput('Switched to GUI mode', 'result');
+                } else {
+                    printOutput('Switched to terminal mode', 'result');
+                }
+            } else {
+                printOutput('kenny-cli: unknown option. try "kenny-cli -help"', 'error');
+            }
+            break;
+
+        case 'ls':
+            listFiles();
+            break;
+
+        case 'cd':
+            changeDirectory(args[0]);
+            break;
+
+        case 'cat':
+            if (args[0]) {
+                viewFile(args[0]);
+            } else {
+                printOutput('cat: missing file operand', 'error');
+            }
+            break;
+
+        case 'nvim':
+        case 'vi':
+        case 'vim':
+            if (args[0]) {
+                viewFile(args[0]);
+                printOutput('Opened in nvim (read-only mode)', 'result');
+            } else {
+                printOutput('nvim: missing file operand', 'error');
+            }
+            break;
+
+        case 'chat':
+            startChat();
+            break;
+
+        case 'whoami':
+            printOutput('kenny - Senior Data Engineer', 'result');
+            break;
+
+        case 'clear':
+            document.getElementById('output').innerHTML = '';
+            break;
+
+        case 'pwd':
+            printOutput('/home/kenny/' + currentDir, 'result');
+            break;
+
+        case 'date':
+            printOutput(new Date().toString(), 'result');
+            break;
+
+        case '':
+            break;
+
+        default:
+            printOutput(`kenny-cli: command not found: ${command}`, 'error');
+    }
+}
+
+function listFiles() {
+    if (currentDir === '~') {
+        printOutput('about.txt  projects.md  resume.txt  contact.md', 'result');
+    } else if (currentDir === 'projects') {
+        printOutput('cover_letter/  portfolio/  agent/', 'dir');
+    } else if (currentDir === 'archive') {
+        printOutput('old_portfolio/', 'dir');
+    } else {
+        printOutput(`ls: cannot access '${currentDir}': No such file or directory`, 'error');
+    }
+}
+
+function changeDirectory(dir) {
+    if (!dir || dir === '~') {
+        currentDir = '~';
+        printOutput('', 'result');
+    } else if (dir === '..') {
+        currentDir = '~';
+        printOutput('', 'result');
+    } else if (directories.includes(dir)) {
+        currentDir = dir;
+        printOutput('', 'result');
+    } else {
+        printOutput(`cd: ${dir}: No such directory`, 'error');
+    }
+}
+
+function viewFile(filename) {
+    if (files[filename]) {
+        printOutput(files[filename], 'result');
+    } else {
+        printOutput(`cat: ${filename}: No such file`, 'error');
+    }
+}
+
+function startChat() {
+    chatState = { step: 'name', data: {} };
+    printOutput('--- Send me a message ---', 'result');
+    printOutput('Enter your name:', 'prompt');
+}
+
+function handleChatInput(input) {
+    if (chatState.step === 'name') {
+        chatState.data.name = input;
+        chatState.step = 'email';
+        printOutput('Enter your email (optional, press Enter to skip):', 'prompt');
+    } else if (chatState.step === 'email') {
+        chatState.data.email = input || null;
+        chatState.step = 'message';
+        printOutput('Enter your message:', 'prompt');
+    } else if (chatState.step === 'message') {
+        chatState.data.message = input;
+        chatState.step = 'done';
+
+        // Show preview and instructions
+        printOutput('', 'result');
+        printOutput('--- Message Preview ---', 'result');
+        printOutput(`Name: ${chatState.data.name}`, 'result');
+        printOutput(`Email: ${chatState.data.email || '(none)'}`, 'result');
+        printOutput(`Message: ${chatState.data.message}`, 'result');
+        printOutput('', 'result');
+        printOutput('Message sent! (Formspree integration coming soon)', 'result');
+
+        chatState = null;
+    }
+}
+
+// Input handling
+document.getElementById('commandInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        const cmd = this.value;
+        printOutput('kenny@portfolio:~$ ' + cmd, 'command');
+        handleCommand(cmd);
+        this.value = '';
+        window.scrollTo(0, document.body.scrollHeight);
+    } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (historyIndex > 0) {
+            historyIndex--;
+            this.value = commandHistory[historyIndex];
+        }
+    } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (historyIndex < commandHistory.length - 1) {
+            historyIndex++;
+            this.value = commandHistory[historyIndex];
+        } else {
+            historyIndex = commandHistory.length;
+            this.value = '';
+        }
+    } else if (e.key === 'Tab') {
+        e.preventDefault();
+        // Simple tab completion
+        const partial = this.value.split(' ').pop();
+        const allCommands = ['kenny-cli', 'ls', 'cd', 'cat', 'nvim', 'chat', 'whoami', 'clear', 'pwd', 'date'];
+        const matches = allCommands.filter(c => c.startsWith(partial));
+        if (matches.length === 1) {
+            this.value = this.value.replace(partial, matches[0]);
+        }
+    }
+});
+
+// Keep focus on input
+document.addEventListener('click', function() {
+    document.getElementById('commandInput').focus();
+});
