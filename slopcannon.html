@@ -150,6 +150,7 @@
         const story = [
             ['dlog', 180, 'NARRATOR', 'A programmer walks into work...'],
             ['walk', 180],           // 1: programmer walks in
+            ['boss_in', 120],       // 2: boss walks in
             ['dlog', 240, 'BOSS', 'Think of a number between 1 and 10'],
             ['dlog', 180, 'PROGRAMMER', '7'],
             ['dlog', 240, 'BOSS', 'Great. Now automate that.'],
@@ -344,8 +345,8 @@
                 dialogueArea.style.display = 'block';
                 speakerEl.textContent = spk;
                 textEl.textContent = txt;
-                // Always draw boss in dialogue (he should be on screen)
-                if (boss.x > 850) boss.x = 850; // Reset if off screen
+                // Position boss for dialogue
+                if (boss.x > 500 || boss.x < 300) boss.x = 420;
                 drawBoss(boss.x, boss.y);
                 programmer.emotion = spk === 'BOSS' ? 'stressed' : 'thinking';
             } else if (type === 'code') {
