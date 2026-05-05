@@ -17,20 +17,7 @@ Currently open to new opportunities.
 Skills: Python, SQL, Data Engineering, ETL, Pandas, SQLAlchemy`,
     'projects.md': `# Projects
 
-1. Cover Letter Generator
-   Tool to automate and customize cover letters for job applications
-   Tech: Python
-   Link: https://github.com/kmayhue/cover_letter_generator
-
-2. Portfolio Website
-   This website - terminal-style portfolio built with HTML/CSS/JS
-   Tech: HTML, CSS, JavaScript
-   Link: https://github.com/kmayhue/portfolio
-
-3. Tome (This Agent)
-   My AI assistant with memory system
-   Tech: Python, SQLite
-   Link: https://github.com/kmayhue/agent`,
+TODO KM - Think of projects to put here`,
     'resume.txt': `# Resume
 
 EXPERIENCE
@@ -57,7 +44,7 @@ Let's connect!
 Or use the chat command to send me a message directly!`
 };
 
-const directories = ['~', 'projects', 'archive'];
+const directories = ['~', 'archive'];
 
 // Initial message
 window.onload = function() {
@@ -85,9 +72,14 @@ function toggleMode() {
 
 function showGuiFile(name) {
     const content = document.getElementById('guiContent');
+
+    if (name === 'projects') {
+        content.innerHTML = '<h1>Projects</h1><p>TODO KM - Think of projects to put here</p>';
+        return;
+    }
+
     const guiFiles = {
         'about': files['about.txt'],
-        'projects': files['projects.md'],
         'resume': files['resume.txt'],
         'contact': files['contact.md']
     };
@@ -235,12 +227,10 @@ function listFiles() {
         const dirs = directories.filter(d => d !== '~').join('  ');
         const files_list = Object.keys(files).join('  ');
         printOutput(files_list + (dirs ? '  ' + dirs : ''), 'result');
-    } else if (currentDir === 'projects') {
-        printOutput('cover_letter/  portfolio/  agent/', 'dir');
     } else if (currentDir === 'archive') {
         printOutput('old_portfolio/', 'dir');
     } else {
-        printOutput(`ls: cannot access '${currentDir}': No such file or directory`, 'error');
+        printOutput('', 'result');
     }
 }
 
