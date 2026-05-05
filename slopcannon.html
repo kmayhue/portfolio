@@ -251,34 +251,33 @@
         }
 
         function drawDesk(x, y) {
-            // Desk
-            ctx.fillStyle = '#004400';
-            ctx.fillRect(x - 20, y + 80, 180, 8);
-            ctx.fillRect(x - 10, y + 88, 12, 40);
-            ctx.fillRect(x + 138, y + 88, 12, 40);
-            // Chair back
+            // Chair (left side of desk)
             ctx.fillStyle = '#006600';
-            ctx.fillRect(x + 55, y + 30, 30, 50);
-            // Chair seat
+            ctx.fillRect(x - 80, y + 30, 25, 45);
             ctx.fillStyle = '#008800';
-            ctx.fillRect(x + 55, y + 75, 30, 10);
+            ctx.fillRect(x - 80, y + 70, 25, 8);
+            // Desk (in front of programmer)
+            ctx.fillStyle = '#004400';
+            ctx.fillRect(x - 60, y + 75, 140, 6);
+            ctx.fillRect(x - 50, y + 81, 10, 35);
+            ctx.fillRect(x + 30, y + 81, 10, 35);
         }
 
         function drawPC(x, y) {
-            // Monitor
+            // Monitor on desk
             ctx.fillStyle = '#00ff00';
-            ctx.fillRect(x, y, 100, 70);
+            ctx.fillRect(x, y, 80, 55);
             ctx.fillStyle = '#001100';
-            ctx.fillRect(x+4, y+4, 92, 62);
+            ctx.fillRect(x+3, y+3, 74, 49);
             ctx.fillStyle = '#00ff00';
-            ctx.fillRect(x+8, y+8, 84, 54);
-            // Monitor stand
+            ctx.fillRect(x+6, y+6, 68, 43);
+            // Stand
             ctx.fillStyle = '#003300';
-            ctx.fillRect(x+40, y+70, 20, 15);
-            ctx.fillRect(x+20, y+85, 60, 4);
+            ctx.fillRect(x+32, y+55, 16, 12);
+            ctx.fillRect(x+20, y+67, 40, 3);
             // Keyboard
             ctx.fillStyle = '#004400';
-            ctx.fillRect(x+15, y+90, 70, 6);
+            ctx.fillRect(x+10, y+78, 60, 5);
         }
 
         function drawFile(name, x, y) {
@@ -338,12 +337,12 @@
             const [type, dur, ...args] = story[scene];
             timer++;
 
-            drawPC(520, 180);
-            drawDesk(520, 180);
+            drawDesk(180, 180);
+            drawPC(230, 180);
             drawProg(programmer.x, programmer.y, programmer.emotion || 'neutral', programmer.sitting);
 
             if (type === 'walk') {
-                programmer.x = Math.min(programmer.x + 4, 180);
+                programmer.x = Math.min(programmer.x + 5, 120);
             } else if (type === 'sit') {
                 programmer.sitting = true;
             } else if (type === 'boss_in') {
@@ -368,51 +367,51 @@
                     ctx.fillText('7', programmer.x + 70, programmer.y - 10);
                 }
             } else if (type === 'code') {
-                drawFile('random_number_generator/', 320, 150);
-                drawFile('random_number_generator.py', 320, 185);
+                drawFile('random_number_generator/', 250, 120);
+                drawFile('random_number_generator.py', 250, 155);
             } else if (type === 'msg') {
-                drawFile('random_number_generator.py', 320, 185);
-                drawBubble(args[0], 480, 120);
+                drawFile('random_number_generator.py', 250, 155);
+                drawBubble(args[0], 280, 100);
                 programmer.emotion = 'happy';
             } else if (type === 'claude') {
-                drawFile('random_number_generator_v1.py', 320, 185);
+                drawFile('random_number_generator_v1.py', 250, 155);
                 ctx.fillStyle = '#00ff00'; ctx.font = '22px VT323';
-                ctx.fillText('Downloading Claude Code...', 320, 145);
+                ctx.fillText('Downloading Claude Code...', 250, 115);
             } else if (type === 'ai') {
-                drawFile('random_number_generator_v1.py', 280, 150);
-                drawFile('random_number_generator_v2.py', 280, 180);
-                drawFile('uv.lock', 280, 210);
-                drawFile('pyproject.toml', 280, 240);
+                drawFile('random_number_generator_v1.py', 210, 120);
+                drawFile('random_number_generator_v2.py', 210, 155);
+                drawFile('uv.lock', 210, 190);
+                drawFile('pyproject.toml', 210, 225);
             } else if (type === 'leader') {
-                drawDesk(380, 60);
-                drawPC(380, 60);
+                drawDesk(180, 40);
+                drawPC(230, 40);
                 drawBoard(args[0]);
                 programmer.emotion = args[0] === 10 ? 'stressed' : (args[0] === 1 ? 'happy' : 'neutral');
             } else if (type === 'loop') {
-                drawFile('loop.py', 300, 170);
+                drawFile('loop.py', 230, 140);
                 ctx.fillStyle = '#00ff00'; ctx.font = '18px VT323';
-                ctx.fillText('$ python3 loop.py', 380, 170);
+                ctx.fillText('$ python3 loop.py', 280, 140);
             } else if (type === 'run') {
-                drawFile('loop.py', 300, 170);
+                drawFile('loop.py', 230, 140);
                 ctx.fillStyle = '#00ff00'; ctx.font = '24px VT323';
-                ctx.fillText('Running...', 380, 150);
+                ctx.fillText('Running...', 280, 120);
                 tokens = Math.min(999, tokens + 5);
-                ctx.fillText('TOKENS: ' + tokens, 380, 190);
+                ctx.fillText('TOKENS: ' + tokens, 280, 160);
             } else if (type === 'recurs') {
-                drawFile('loop.py', 300, 150);
-                drawFile('recursive_loop.py', 300, 185);
+                drawFile('loop.py', 230, 120);
+                drawFile('recursive_loop.py', 230, 155);
             } else if (type === 'run2') {
                 tokens = Math.min(9999, tokens + 30);
                 ctx.fillStyle = '#00ff00'; ctx.font = '32px VT323';
-                ctx.fillText('TOKENS: ' + tokens, 350, 160);
+                ctx.fillText('TOKENS: ' + tokens, 280, 130);
                 ctx.font = '22px VT323';
-                ctx.fillText('Running recursive loop...', 350, 200);
+                ctx.fillText('Running recursive loop...', 280, 170);
             } else if (type === 'infinite') {
                 programmer.emotion = 'happy';
                 tokens += Math.floor(Math.random() * 50) + 15;
                 ctx.fillStyle = '#00ff00'; ctx.font = '36px VT323';
-                ctx.fillText('TOKENS: ' + tokens, 280, 120);
-                if (frame % 4 === 0) ctx.fillRect(500 + Math.random() * 100, 170 + Math.random() * 50, 6, 6);
+                ctx.fillText('TOKENS: ' + tokens, 250, 90);
+                if (frame % 4 === 0) ctx.fillRect(320 + Math.random() * 80, 80 + Math.random() * 40, 6, 6);
             }
 
             if (timer >= dur) {
