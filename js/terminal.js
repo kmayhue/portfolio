@@ -52,7 +52,7 @@ Let's connect!
 
 - LinkedIn: https://www.linkedin.com/in/kennethmayhue/
 - GitHub: https://github.com/kmayhue
-- Email: kenny@example.com
+- Email: mayhuek@gmail.com
 
 Or use the chat command to send me a message directly!`
 };
@@ -104,7 +104,7 @@ function showGuiFile(name) {
         html += `
             <div class="contact-form">
                 <h2>Send me a message</h2>
-                <a href="mailto:kenny@example.com" class="mailto-btn">Open Email Client</a>
+                <a href="mailto:mayhuek@gmail.com" class="mailto-btn">Open Email Client</a>
             </div>`;
     }
 
@@ -184,7 +184,6 @@ function handleCommand(cmd) {
         case 'vim':
             if (args[0]) {
                 viewFile(args[0]);
-                printOutput('Opened in nvim (read-only mode)', 'result');
             } else {
                 printOutput('nvim: missing file operand', 'error');
             }
@@ -296,8 +295,8 @@ function handleChatInput(input) {
         printOutput('', 'result');
         const subject = encodeURIComponent('Portfolio Message from ' + chatState.data.name);
         const body = encodeURIComponent(`Name: ${chatState.data.name}\nEmail: ${chatState.data.email || '(none)'}\n\nMessage:\n${chatState.data.message}`);
-        printOutput('Message sent! Send it to me at: kenny@example.com', 'result');
-        printOutput(`mailto:kenny@example.com?subject=${subject}&body=${body}`, 'result');
+        printOutput('Message sent! Send it to me at: mayhuek@gmail.com', 'result');
+        printOutput(`mailto:mayhuek@gmail.com?subject=${subject}&body=${body}`, 'result');
 
         chatState = null;
     }
@@ -328,12 +327,30 @@ document.getElementById('commandInput').addEventListener('keydown', function(e) 
         }
     } else if (e.key === 'Tab') {
         e.preventDefault();
-        // Simple tab completion
-        const partial = this.value.split(' ').pop();
-        const allCommands = ['kenny-cli', 'ls', 'cd', 'cat', 'nvim', 'chat', 'whoami', 'clear', 'pwd', 'date', 'mkdir'];
-        const matches = allCommands.filter(c => c.startsWith(partial));
-        if (matches.length === 1) {
-            this.value = this.value.replace(partial, matches[0]);
+        const parts = this.value.split(' ');
+        const partial = parts[parts.length - 1];
+        const cmd = parts[0];
+
+        if (['cat', 'nvim', 'vi', 'vim'].includes(cmd)) {
+            const allFiles = Object.keys(files).concat(directories.filter(d => d !== '~'));
+            const matches = allFiles.filter(f => f.startsWith(partial));
+            if (matches.length === 1) {
+                parts[parts.length - 1] = matches[0];
+                this.value = parts.join(' ');
+            }
+        } else if (cmd === 'cd') {
+            const matches = directories.filter(d => d.startsWith(partial));
+            if (matches.length === 1) {
+                parts[parts.length - 1] = matches[0];
+                this.value = parts.join(' ');
+            }
+        } else {
+            const allCommands = ['kenny-cli', 'ls', 'cd', 'cat', 'nvim', 'chat', 'whoami', 'clear', 'pwd', 'date', 'mkdir'];
+            const matches = allCommands.filter(c => c.startsWith(partial));
+            if (matches.length === 1) {
+                parts[parts.length - 1] = matches[0];
+                this.value = parts.join(' ');
+            }
         }
     }
 });
