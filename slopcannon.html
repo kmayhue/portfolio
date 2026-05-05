@@ -251,16 +251,16 @@
         }
 
         function drawDesk(x, y) {
-            // Chair (left side of desk)
+            // Chair (positioned between programmer and desk)
             ctx.fillStyle = '#006600';
-            ctx.fillRect(x - 80, y + 30, 25, 45);
+            ctx.fillRect(x - 30, y + 30, 25, 45);
             ctx.fillStyle = '#008800';
-            ctx.fillRect(x - 80, y + 70, 25, 8);
-            // Desk (in front of programmer)
+            ctx.fillRect(x - 30, y + 70, 25, 8);
+            // Desk
             ctx.fillStyle = '#004400';
-            ctx.fillRect(x - 60, y + 75, 140, 6);
-            ctx.fillRect(x - 50, y + 81, 10, 35);
-            ctx.fillRect(x + 30, y + 81, 10, 35);
+            ctx.fillRect(x - 20, y + 75, 140, 6);
+            ctx.fillRect(x - 10, y + 81, 10, 35);
+            ctx.fillRect(x + 70, y + 81, 10, 35);
         }
 
         function drawPC(x, y) {
@@ -288,7 +288,7 @@
 
         function drawFileOnScreen(files) {
             // Draw files on the computer screen (the green area)
-            const screenX = 236; // 230 + 6
+            const screenX = 306; // 300 + 6
             const screenY = 186; // 180 + 6
             ctx.save();
             ctx.beginPath();
@@ -319,8 +319,8 @@
             const [type, dur, ...args] = story[scene];
             timer++;
 
-            drawDesk(180, 180);
-            drawPC(230, 180);
+            drawDesk(250, 180);
+            drawPC(300, 180);
             drawProg(programmer.x, programmer.y, programmer.emotion || 'neutral', programmer.sitting);
 
             if (type === 'walk') {
@@ -328,6 +328,8 @@
             } else if (type === 'sit') {
                 programmer.sitting = true;
             } else if (type === 'boss_in') {
+                // Ensure boss starts from right side
+                if (boss.x < 400) boss.x = 860;
                 boss.x = Math.max(boss.x - 5, 420);
                 drawBoss(boss.x, boss.y);
             } else if (type === 'boss_out') {
@@ -342,6 +344,8 @@
                 dialogueArea.style.display = 'block';
                 speakerEl.textContent = spk;
                 textEl.textContent = txt;
+                // Always draw boss in dialogue (he should be on screen)
+                if (boss.x > 850) boss.x = 850; // Reset if off screen
                 drawBoss(boss.x, boss.y);
                 programmer.emotion = spk === 'BOSS' ? 'stressed' : 'thinking';
             } else if (type === 'code') {
@@ -358,7 +362,7 @@
                 drawFileOnScreen(['random_number_generator_v1.py', 'random_number_generator_v2.py', 'uv.lock', 'pyproject.toml']);
             } else if (type === 'leader') {
                 // Show leaderboard on computer screen
-                const screenX = 236;
+                const screenX = 306;
                 const screenY = 46;
                 ctx.save();
                 ctx.beginPath();
