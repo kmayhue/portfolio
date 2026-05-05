@@ -9,7 +9,6 @@ let chatState = null; // null or { step: 'name' | 'email' | 'message', data: {} 
 const files = {
     'about.txt': `Hi, I'm Kenny
 Senior Data Engineer based in Emeryville, CA
-Moving to Walnut Creek in 2 months
 
 I build data pipelines, love Python, and specialize in turning data into insights.
 Currently open to new opportunities.
@@ -266,27 +265,22 @@ function startChat() {
 function handleChatInput(input) {
     if (chatState.step === 'name') {
         chatState.data.name = input;
-        chatState.step = 'email';
-        printOutput('Enter your email (optional, press Enter to skip):', 'prompt');
-    } else if (chatState.step === 'email') {
-        chatState.data.email = input || null;
         chatState.step = 'message';
         printOutput('Enter your message:', 'prompt');
     } else if (chatState.step === 'message') {
         chatState.data.message = input;
         chatState.step = 'done';
 
-        // Show preview and instructions
+        // Show preview and send email
         printOutput('', 'result');
         printOutput('--- Message Preview ---', 'result');
         printOutput(`Name: ${chatState.data.name}`, 'result');
-        printOutput(`Email: ${chatState.data.email || '(none)'}`, 'result');
         printOutput(`Message: ${chatState.data.message}`, 'result');
         printOutput('', 'result');
         const subject = encodeURIComponent('Portfolio Message from ' + chatState.data.name);
-        const body = encodeURIComponent(`Name: ${chatState.data.name}\nEmail: ${chatState.data.email || '(none)'}\n\nMessage:\n${chatState.data.message}`);
-        printOutput('Message sent! Send it to me at: mayhuek@gmail.com', 'result');
-        printOutput(`mailto:mayhuek@gmail.com?subject=${subject}&body=${body}`, 'result');
+        const body = encodeURIComponent(`Name: ${chatState.data.name}\n\nMessage:\n${chatState.data.message}`);
+        printOutput('Opening email to mayhuek@gmail.com...', 'result');
+        window.location.href = `mailto:mayhuek@gmail.com?subject=${subject}&body=${body}`;
 
         chatState = null;
     }
@@ -345,7 +339,11 @@ document.getElementById('commandInput').addEventListener('keydown', function(e) 
     }
 });
 
-// Keep focus on input
-document.addEventListener('click', function() {
-    document.getElementById('commandInput').focus();
+// Keep focus on input when clicking outside output
+document.addEventListener('click', function(e) {
+    const output = document.getElementById('output');
+    const input = document.getElementById('commandInput');
+    if (!output.contains(e.target) && e.target !== input) {
+        input.focus();
+    }
 });
