@@ -148,8 +148,8 @@
 
         // Story with correct flow
         const story = [
-            ['walk', 180],           // 0: programmer walks in
-            ['boss_in', 120],        // 1: boss walks in
+            ['dlog', 180, 'NARRATOR', 'A programmer walks into work...'],
+            ['walk', 180],           // 1: programmer walks in
             ['dlog', 240, 'BOSS', 'Think of a number between 1 and 10'],
             ['dlog', 180, 'PROGRAMMER', '7'],
             ['dlog', 240, 'BOSS', 'Great. Now automate that.'],
@@ -282,8 +282,26 @@
 
         function drawFile(name, x, y) {
             ctx.fillStyle = '#00ff00';
-            ctx.font = '18px VT323';
+            ctx.font = '14px VT323';
             ctx.fillText(name, x, y);
+        }
+
+        function drawFileOnScreen(files) {
+            // Draw files on the computer screen (the green area)
+            const screenX = 236; // 230 + 6
+            const screenY = 186; // 180 + 6
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(screenX, screenY, 68, 43);
+            ctx.clip();
+            ctx.fillStyle = '#00ff00';
+            ctx.font = '10px VT323';
+            let y = screenY + 12;
+            files.forEach(f => {
+                ctx.fillText(f, screenX + 4, y);
+                y += 12;
+            });
+            ctx.restore();
         }
 
         function drawBubble(text, x, y) {
@@ -362,50 +380,54 @@
                 textEl.textContent = txt;
                 drawBoss(boss.x, boss.y);
                 programmer.emotion = spk === 'BOSS' ? 'stressed' : 'thinking';
-                if (spk === 'PROGRAMMER' && txt === '7') {
-                    ctx.fillStyle = '#00ff00'; ctx.font = '32px VT323';
-                    ctx.fillText('7', programmer.x + 70, programmer.y - 10);
-                }
             } else if (type === 'code') {
-                drawFile('random_number_generator/', 250, 120);
-                drawFile('random_number_generator.py', 250, 155);
+                drawFileOnScreen(['random_number_generator/', 'random_number_generator.py']);
             } else if (type === 'msg') {
-                drawFile('random_number_generator.py', 250, 155);
+                drawFileOnScreen(['random_number_generator.py']);
                 drawBubble(args[0], 280, 100);
                 programmer.emotion = 'happy';
             } else if (type === 'claude') {
-                drawFile('random_number_generator_v1.py', 250, 155);
-                ctx.fillStyle = '#00ff00'; ctx.font = '22px VT323';
-                ctx.fillText('Downloading Claude Code...', 250, 115);
+                drawFileOnScreen(['random_number_generator_v1.py']);
+                ctx.fillStyle = '#00ff00'; ctx.font = '18px VT323';
+                ctx.fillText('Downloading Claude...', 250, 145);
             } else if (type === 'ai') {
-                drawFile('random_number_generator_v1.py', 210, 120);
-                drawFile('random_number_generator_v2.py', 210, 155);
-                drawFile('uv.lock', 210, 190);
-                drawFile('pyproject.toml', 210, 225);
+                drawFileOnScreen(['random_number_generator_v1.py', 'random_number_generator_v2.py', 'uv.lock', 'pyproject.toml']);
             } else if (type === 'leader') {
-                drawDesk(180, 40);
-                drawPC(230, 40);
-                drawBoard(args[0]);
+                // Show leaderboard on computer screen
+                const screenX = 236;
+                const screenY = 46;
+                ctx.save();
+                ctx.beginPath();
+                ctx.rect(screenX, screenY, 68, 43);
+                ctx.clip();
+                ctx.fillStyle = '#00ff00';
+                ctx.font = '8px VT323';
+                const names = ['YOU', 'BOSS', 'SARAH', 'MIKE', 'JENNY'];
+                const scores = [args[0]===1?9999:(6-args[0])*2000+500, 9999, 7500, 5000, 2500];
+                for(let i=0; i<5; i++) {
+                    ctx.fillStyle = (i+1)===args[0] ? '#ffff00' : '#00ff00';
+                    ctx.fillText((i+1)+'.'+names[i]+' '+scores[i], screenX+2, screenY+10+i*8);
+                }
+                ctx.restore();
                 programmer.emotion = args[0] === 10 ? 'stressed' : (args[0] === 1 ? 'happy' : 'neutral');
             } else if (type === 'loop') {
-                drawFile('loop.py', 230, 140);
+                drawFileOnScreen(['loop.py']);
                 ctx.fillStyle = '#00ff00'; ctx.font = '18px VT323';
-                ctx.fillText('$ python3 loop.py', 280, 140);
+                ctx.fillText('$ python3 loop.py', 250, 130);
             } else if (type === 'run') {
-                drawFile('loop.py', 230, 140);
+                drawFileOnScreen(['loop.py']);
                 ctx.fillStyle = '#00ff00'; ctx.font = '24px VT323';
-                ctx.fillText('Running...', 280, 120);
+                ctx.fillText('Running...', 250, 110);
                 tokens = Math.min(999, tokens + 5);
-                ctx.fillText('TOKENS: ' + tokens, 280, 160);
+                ctx.fillText('TOKENS: ' + tokens, 250, 150);
             } else if (type === 'recurs') {
-                drawFile('loop.py', 230, 120);
-                drawFile('recursive_loop.py', 230, 155);
+                drawFileOnScreen(['loop.py', 'recursive_loop.py']);
             } else if (type === 'run2') {
                 tokens = Math.min(9999, tokens + 30);
                 ctx.fillStyle = '#00ff00'; ctx.font = '32px VT323';
-                ctx.fillText('TOKENS: ' + tokens, 280, 130);
+                ctx.fillText('TOKENS: ' + tokens, 250, 120);
                 ctx.font = '22px VT323';
-                ctx.fillText('Running recursive loop...', 280, 170);
+                ctx.fillText('Running recursive...', 250, 160);
             } else if (type === 'infinite') {
                 programmer.emotion = 'happy';
                 tokens += Math.floor(Math.random() * 50) + 15;
