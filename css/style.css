@@ -23,11 +23,11 @@ body {
     color: var(--fg);
     font-size: 14px;
     line-height: 1.5;
-    padding: 20px;
 }
 
 .terminal {
     height: 100%;
+    padding: 20px;
     display: flex;
     flex-direction: column;
 }
@@ -35,9 +35,8 @@ body {
 .output {
     flex: 1;
     overflow-y: auto;
-    margin-bottom: 10px;
     white-space: pre-wrap;
-    padding-bottom: 10px;
+    min-height: 0;
 }
 
 .output .command {
@@ -57,6 +56,7 @@ body {
     display: flex;
     align-items: center;
     flex-shrink: 0;
+    padding-top: 10px;
 }
 
 .prompt {
@@ -78,9 +78,8 @@ body {
 }
 
 @media (max-width: 600px) {
-    body {
+    .terminal {
         padding: 12px;
-        font-size: 14px;
     }
 
     .prompt {
