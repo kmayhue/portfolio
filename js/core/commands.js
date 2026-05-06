@@ -65,11 +65,16 @@ const commands = {
                 return { error: `ls: cannot access '${path}': No such file or directory` };
             }
 
-            return items.map(i => {
-                let name = i.name + (i.isDirectory ? '/' : '');
+            const html = items.map(i => {
+                let className = i.isDirectory ? 'directory' : 'file';
+                if (i.url) className = 'url-file';
+                let name = `<span class="${className}">${i.name}</span>`;
+                if (i.isDirectory) name += '/';
                 if (i.url) name += '*';
                 return name;
             }).join('  ');
+
+            return { html };
         },
         help: 'List directory contents',
         completer: (partial, state) => {
