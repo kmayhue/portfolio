@@ -1,0 +1,68 @@
+:root {
+    --bg: #1e1e1e;
+    --fg: #d4d4d4;
+    --prompt: #4ec9b0;
+    --error: #f14c4c;
+    --font: 'Fira Code', 'Consolas', monospace;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--fg);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.terminal {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.output {
+    margin-bottom: 10px;
+    white-space: pre-wrap;
+}
+
+.output .command {
+    color: var(--fg);
+    font-weight: bold;
+}
+
+.output .result {
+    color: var(--fg);
+}
+
+.output .error {
+    color: var(--error);
+}
+
+.input-line {
+    display: flex;
+    align-items: center;
+}
+
+.prompt {
+    color: var(--prompt);
+    margin-right: 8px;
+    white-space: nowrap;
+}
+
+#commandInput {
+    background: transparent;
+    border: none;
+    color: var(--fg);
+    font-family: var(--font);
+    font-size: 14px;
+    flex: 1;
+    outline: none;
+    caret-color: var(--fg);
+}
