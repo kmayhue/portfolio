@@ -56,6 +56,10 @@ function handleCommand(cmd) {
     }
 
     if (command === 'chat') {
+        if (cmd.trim()) {
+            state.history.push(cmd.trim());
+            state.historyIndex = state.history.length;
+        }
         startChat();
         return;
     }
@@ -111,7 +115,7 @@ function handleChatInput(value) {
         const mailtoUrl = `mailto:mayhuek@gmail.com?subject=${subject}&body=${body}`;
 
         print('Opening email client...', 'result');
-        window.location.href = mailtoUrl;
+        window.open(mailtoUrl, '_blank');
 
         state.chatState = null;
         updatePrompt();
