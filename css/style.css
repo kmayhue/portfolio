@@ -12,24 +12,32 @@
     box-sizing: border-box;
 }
 
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
 body {
     font-family: var(--font);
     background: var(--bg);
     color: var(--fg);
     font-size: 14px;
     line-height: 1.5;
-    min-height: 100vh;
     padding: 20px;
 }
 
 .terminal {
-    max-width: 900px;
-    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .output {
+    flex: 1;
+    overflow-y: auto;
     margin-bottom: 10px;
     white-space: pre-wrap;
+    padding-bottom: 10px;
 }
 
 .output .command {
@@ -48,6 +56,7 @@ body {
 .input-line {
     display: flex;
     align-items: center;
+    flex-shrink: 0;
 }
 
 .prompt {
@@ -65,4 +74,20 @@ body {
     flex: 1;
     outline: none;
     caret-color: var(--fg);
+    min-width: 0;
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 12px;
+        font-size: 14px;
+    }
+
+    .prompt {
+        font-size: 12px;
+    }
+
+    #commandInput {
+        font-size: 14px;
+    }
 }

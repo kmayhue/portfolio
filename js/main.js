@@ -17,6 +17,10 @@ function updatePrompt() {
     promptEl.textContent = getPrompt();
 }
 
+function scrollToBottom() {
+    output.scrollTop = output.scrollHeight;
+}
+
 function print(text, type = 'result') {
     if (text === '' || text === undefined) return;
 
@@ -31,6 +35,7 @@ function print(text, type = 'result') {
     }
 
     output.appendChild(line);
+    scrollToBottom();
 }
 
 function handleCommand(cmd) {
@@ -59,7 +64,6 @@ function handleCommand(cmd) {
         print(result);
     }
 
-    window.scrollTo(0, document.body.scrollHeight);
     updatePrompt();
 }
 
