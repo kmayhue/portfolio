@@ -77,7 +77,7 @@ test.describe('Portfolio Terminal', () => {
 
     await input.fill('ls');
     await input.press('Enter');
-    await expect(page.locator('.output')).toContainText('about/');
+    await expect(page.locator('.output')).toContainText('about.txt');
     await expect(page.locator('.output')).toContainText('projects/');
   });
 
@@ -108,22 +108,22 @@ test.describe('Portfolio Terminal', () => {
   test('cd changes directory', async ({ page }) => {
     const input = page.locator('#commandInput');
 
-    await input.fill('cd about');
+    await input.fill('cd projects');
     await input.press('Enter');
     await input.fill('pwd');
     await input.press('Enter');
-    await expect(page.locator('.output')).toContainText('about');
+    await expect(page.locator('.output')).toContainText('projects');
 
     await input.fill('ls');
     await input.press('Enter');
-    await expect(page.locator('.output')).toContainText('bio.txt');
-    await expect(page.locator('.output')).toContainText('skills.md');
+    await expect(page.locator('.output')).toContainText('data-pipeline.md');
+    await expect(page.locator('.output')).toContainText('etl-tool.md');
   });
 
   test('cd back to home with ~', async ({ page }) => {
     const input = page.locator('#commandInput');
 
-    await input.fill('cd about');
+    await input.fill('cd projects');
     await input.press('Enter');
     await input.fill('cd ~');
     await input.press('Enter');
@@ -135,7 +135,7 @@ test.describe('Portfolio Terminal', () => {
   test('cd .. goes up', async ({ page }) => {
     const input = page.locator('#commandInput');
 
-    await input.fill('cd about');
+    await input.fill('cd projects');
     await input.press('Enter');
     await input.fill('cd ..');
     await input.press('Enter');
@@ -158,5 +158,14 @@ test.describe('Portfolio Terminal', () => {
     await input.fill('nvim nonexistent.txt');
     await input.press('Enter');
     await expect(page.locator('.output')).toContainText('No such file or directory');
+  });
+
+  test('nvim about.txt works', async ({ page }) => {
+    const input = page.locator('#commandInput');
+
+    await input.fill('nvim about.txt');
+    await input.press('Enter');
+    await expect(page.locator('.output')).toContainText("I'm Kenny");
+    await expect(page.locator('.output')).toContainText('Senior Data Engineer');
   });
 });

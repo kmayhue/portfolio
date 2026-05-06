@@ -2,13 +2,17 @@ const filesystem = {
     home: {
         type: 'directory',
         children: {
-            'about': {
-                type: 'directory',
-                children: {
-                    'bio.txt': { type: 'file', content: 'Hi, I\'m Kenny\nSenior Data Engineer based in Emeryville, CA' },
-                    'skills.md': { type: 'file', content: '# Skills\n\n- Python\n- SQL\n- Data Engineering' },
-                    'contact.md': { type: 'file', content: '# Contact\n\n- Email: mayhuek@gmail.com\n- LinkedIn: linkedin.com/in/kennethmayhue' }
-                }
+            'about.txt': {
+                type: 'file',
+                content: `Hi, I'm Kenny
+Senior Data Engineer based in Emeryville, CA
+
+I specialize in building data pipelines, ETL processes, and
+turning raw data into actionable insights.
+
+Currently open to new opportunities in data engineering
+and related fields.`,
+                url: null
             },
             'projects': {
                 type: 'directory',
@@ -18,8 +22,21 @@ const filesystem = {
                 }
             },
             'resume.md': { type: 'file', content: '# Resume\n\nSenior Data Engineer\n2022 - Present' },
-            'linkedin.txt': { type: 'file', content: 'https://www.linkedin.com/in/kennethmayhue/' },
-            'github.txt': { type: 'file', content: 'https://github.com/kmayhue' }
+            'linkedin.txt': {
+                type: 'file',
+                content: 'https://www.linkedin.com/in/kennethmayhue/',
+                url: 'https://www.linkedin.com/in/kennethmayhue/'
+            },
+            'github.txt': {
+                type: 'file',
+                content: 'https://github.com/kmayhue',
+                url: 'https://github.com/kmayhue'
+            },
+            'email.txt': {
+                type: 'file',
+                content: 'mayhuek@gmail.com',
+                url: 'mailto:mayhuek@gmail.com'
+            }
         }
     }
 };
@@ -70,7 +87,12 @@ function listDirectory(path) {
     const children = node.children || {};
 
     for (const [name, item] of Object.entries(children)) {
-        items.push({ name, type: item.type, isDirectory: item.type === 'directory' });
+        items.push({
+            name,
+            type: item.type,
+            isDirectory: item.type === 'directory',
+            url: item.url || null
+        });
     }
 
     return items.sort((a, b) => {
@@ -91,4 +113,12 @@ function getFileContent(path) {
 function isDirectory(path) {
     const node = getNode(path);
     return node && node.type === 'directory';
+}
+
+function getFileUrl(path) {
+    const node = getNode(path);
+    if (!node || node.type !== 'file') {
+        return null;
+    }
+    return node.url || null;
 }
