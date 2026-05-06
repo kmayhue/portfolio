@@ -79,6 +79,17 @@ test.describe('Portfolio Terminal', () => {
     await input.press('Enter');
     await expect(page.locator('.output')).toContainText('about.txt');
     await expect(page.locator('.output')).toContainText('projects/');
+    await expect(page.locator('.output')).toContainText('*');
+  });
+
+  test('ls shows asterisk for URL files', async ({ page }) => {
+    const input = page.locator('#commandInput');
+
+    await input.fill('ls');
+    await input.press('Enter');
+    await expect(page.locator('.output')).toContainText('github.txt*');
+    await expect(page.locator('.output')).toContainText('linkedin.txt*');
+    await expect(page.locator('.output')).toContainText('email.txt*');
   });
 
   test('nvim shows file contents', async ({ page }) => {
@@ -167,5 +178,41 @@ test.describe('Portfolio Terminal', () => {
     await input.press('Enter');
     await expect(page.locator('.output')).toContainText("I'm Kenny");
     await expect(page.locator('.output')).toContainText('Senior Data Engineer');
+  });
+
+  test('curl github opens GitHub', async ({ page }) => {
+    const input = page.locator('#commandInput');
+
+    page.on('popup', async popup => {
+      expect(popup.url()).toContain('github.com/kmayhue');
+    });
+
+    await input.fill('curl github');
+    await input.press('Enter');
+    await expect(page.locator('.output')).toContainText('Opening https://github.com/kmayhue');
+  });
+
+  test('curl linkedin opens LinkedIn', async ({ page }) => {
+    const input = page.locator('#commandInput');
+
+    await input.fill('curl linkedin');
+    await input.press('Enter');
+    await expect(page.locator('.output')).toContainText('Opening https://www.linkedin.com/in/kennethmayhue');
+  });
+
+  test('curl on file with URL works', async ({ page }) => {
+    const input = page.locator('#commandInput');
+
+    await input.fill('curl github.txt');
+    await input.press('Enter');
+    await expect(page.locator('.output')).toContainText('Opening https://github.com/kmayhue');
+  });
+
+  test('curl on missing URL shows error', async ({ page }) => {
+    const input = page.locator('#commandInput');
+
+    await input.fill('curl fake.com');
+    await input.press('Enter');
+    await expect(page.locator('.output')).toContainText('could not resolve host');
   });
 });

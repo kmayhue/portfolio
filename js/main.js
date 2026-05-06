@@ -58,6 +58,9 @@ function handleCommand(cmd) {
 
     if (result && result.clear) {
         output.innerHTML = '';
+    } else if (result && result.openUrl) {
+        print(`Opening ${result.openUrl}...`, 'result');
+        window.open(result.openUrl, '_blank');
     } else if (result && result.error) {
         print(result.error, 'error');
     } else if (result) {

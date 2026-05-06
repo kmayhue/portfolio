@@ -1,6 +1,6 @@
 const commands = {
     help: {
-        execute: () => 'Available commands: help, clear, pwd, whoami, date, echo, nvim, ls, cd',
+        execute: () => 'Available commands: help, clear, pwd, whoami, date, echo, nvim, ls, cd, curl',
         help: 'Show help message'
     },
     clear: {
@@ -65,7 +65,11 @@ const commands = {
                 return { error: `ls: cannot access '${path}': No such file or directory` };
             }
 
-            return items.map(i => i.name + (i.isDirectory ? '/' : '')).join('  ');
+            return items.map(i => {
+                let name = i.name + (i.isDirectory ? '/' : '');
+                if (i.url) name += '*';
+                return name;
+            }).join('  ');
         },
         help: 'List directory contents',
         completer: (partial, state) => {
@@ -98,6 +102,44 @@ const commands = {
             if (!items) return [];
             const prefix = state.currentDir === '~' ? '~/' : state.currentDir + '/';
             return items.filter(i => i.isDirectory).map(i => prefix + i.name);
+        }
+    },
+    curl: {
+        execute: (args, state) => {
+            if (!args[0]) {
+                return { error: 'curl: missing URL operand' };
+            }
+
+            const target = args[0].toLowerCase();
+            let url = null;
+
+            if (target === 'github.com' || target === 'github') {
+                url = 'https://github.com/kmayhue';
+            } else if (target === 'linkedin.com' || target === 'linkedin') {
+                url = 'https://www.linkedin.com/in/kennethmayhue/';
+            } else if (target.startsWith('http')) {
+                url = args[0];
+            } else {
+                const path = normalizePath(args[0], state.currentDir);
+                url = getFileUrl(path);
+            }
+
+            if (!url) {
+                return { error: `curl: could not resolve host: ${args[0]}` };
+            }
+
+            return { openUrl: url };
+        },
+        help: 'Open URL in new tab',
+        completer: (partial, state) => {
+            const shortcuts = ['github.com', 'github', 'linkedin.com', 'linkedin'];
+            const matches = shortcuts.filter(s => s.startsWith(partial));
+            if (matches.length) return matches;
+
+            const items = listDirectory(state.currentDir);
+            if (!items) return [];
+            const prefix = state.currentDir === '~' ? '~/' : state.currentDir + '/';
+            return items.filter(i => i.url).map(i => prefix + i.name);
         }
     }
 };
