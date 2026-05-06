@@ -1,0 +1,347 @@
+.ide-container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.ide-sidebar {
+    width: 250px;
+    min-width: 200px;
+    max-width: 400px;
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    resize: horizontal;
+    overflow: hidden;
+}
+
+.ide-sidebar-header {
+    padding: 10px 15px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--fg-secondary);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ide-sidebar-title {
+    font-weight: 600;
+}
+
+.ide-sidebar-toggle {
+    background: none;
+    border: none;
+    color: var(--fg-secondary);
+    font-size: 16px;
+    padding: 2px 6px;
+}
+
+.ide-sidebar-toggle:hover {
+    color: var(--fg-primary);
+}
+
+.ide-explorer {
+    flex: 1;
+    overflow-y: auto;
+    padding: 5px 0;
+}
+
+.ide-section {
+    margin-bottom: 5px;
+}
+
+.ide-section-header {
+    padding: 5px 15px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--fg-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.ide-section-header:hover {
+    background: var(--bg-tertiary);
+}
+
+.ide-section-arrow {
+    font-size: 10px;
+    transition: transform 0.2s;
+}
+
+.ide-section-arrow.collapsed {
+    transform: rotate(-90deg);
+}
+
+.ide-file-tree {
+    padding-left: 10px;
+}
+
+.ide-file-item {
+    padding: 4px 15px 4px 25px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+}
+
+.ide-file-item:hover {
+    background: var(--bg-tertiary);
+}
+
+.ide-file-item.active {
+    background: var(--bg-tertiary);
+    color: var(--fg-primary);
+}
+
+.ide-file-icon {
+    font-size: 14px;
+}
+
+.ide-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.ide-tabs {
+    display: flex;
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border);
+    min-height: 35px;
+}
+
+.ide-tab {
+    padding: 8px 15px;
+    font-size: 13px;
+    color: var(--fg-secondary);
+    cursor: pointer;
+    border-right: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-secondary);
+}
+
+.ide-tab:hover {
+    background: var(--bg-primary);
+}
+
+.ide-tab.active {
+    background: var(--bg-primary);
+    color: var(--fg-primary);
+    border-bottom: 1px solid var(--bg-primary);
+    margin-bottom: -1px;
+}
+
+.ide-tab-close {
+    font-size: 14px;
+    opacity: 0.6;
+}
+
+.ide-tab-close:hover {
+    opacity: 1;
+}
+
+.ide-editor {
+    flex: 1;
+    overflow: auto;
+    background: var(--bg-primary);
+}
+
+.ide-editor-content {
+    padding: 20px;
+    font-size: 14px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+.ide-editor-content h1 {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    color: var(--fg-primary);
+}
+
+.ide-editor-content h2 {
+    font-size: 1.2em;
+    margin: 15px 0 10px;
+    color: var(--success);
+}
+
+.ide-editor-content p {
+    margin-bottom: 10px;
+    color: var(--fg-secondary);
+}
+
+.ide-editor-content code {
+    background: var(--bg-tertiary);
+    padding: 2px 6px;
+    border-radius: 3px;
+}
+
+.ide-editor-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--fg-secondary);
+    font-size: 14px;
+}
+
+.ide-terminal-panel {
+    height: 250px;
+    min-height: 100px;
+    max-height: 60vh;
+    border-top: 1px solid var(--border);
+    background: var(--bg-primary);
+    display: flex;
+    flex-direction: column;
+}
+
+.ide-terminal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 15px;
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--fg-secondary);
+}
+
+.ide-terminal-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.ide-terminal-btn {
+    background: none;
+    border: none;
+    color: var(--fg-secondary);
+    font-size: 14px;
+    padding: 2px 6px;
+}
+
+.ide-terminal-btn:hover {
+    color: var(--fg-primary);
+}
+
+.ide-terminal-body {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.ide-terminal-output {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 15px;
+}
+
+.ide-terminal-output .command {
+    color: var(--fg-primary);
+    font-weight: bold;
+}
+
+.ide-terminal-output .prompt-text {
+    color: var(--prompt);
+}
+
+.ide-terminal-output .result {
+    color: var(--fg-primary);
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.ide-terminal-output .error {
+    color: var(--error);
+}
+
+.ide-terminal-output .file {
+    color: var(--fg-primary);
+}
+
+.ide-terminal-output .directory {
+    color: var(--success);
+    font-weight: bold;
+}
+
+.ide-terminal-input-line {
+    display: flex;
+    align-items: center;
+    padding: 8px 15px;
+    border-top: 1px solid var(--border);
+}
+
+.ide-terminal-prompt {
+    color: var(--prompt);
+    margin-right: 8px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.ide-terminal-input {
+    background: transparent;
+    border: none;
+    color: var(--fg-primary);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    flex: 1;
+    outline: none;
+    caret-color: var(--fg-primary);
+}
+
+.ide-statusbar {
+    height: 22px;
+    background: var(--accent);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    font-size: 12px;
+    gap: 20px;
+}
+
+.ide-statusbar-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.ide-sidebar.collapsed {
+    width: 0;
+    min-width: 0;
+    border: none;
+}
+
+.ide-terminal-panel.collapsed {
+    height: 30px;
+    min-height: 30px;
+}
+
+.ide-terminal-panel.collapsed .ide-terminal-body {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .ide-sidebar {
+        position: absolute;
+        z-index: 100;
+        height: calc(100% - 30px);
+    }
+
+    .ide-terminal-panel {
+        height: 200px;
+    }
+}

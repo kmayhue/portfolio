@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kenny - Portfolio</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/shared.css">
+    <link rel="stylesheet" href="css/terminal.css">
+    <link rel="stylesheet" href="css/ide.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
@@ -14,28 +16,73 @@
         <button id="modeBtn" onclick="toggleMode()">mode: terminal</button>
     </div>
 
-    <div class="terminal" id="terminal">
-        <div class="output" id="output"></div>
-        <div class="input-line">
-            <span class="prompt">kenny@portfolio:~$</span>
-            <input type="text" id="commandInput" autocomplete="off" spellcheck="false" autofocus value="kenny-cli --help">
+    <div id="terminal" class="terminal">
+        <div class="terminal-output" id="terminalOutput"></div>
+        <div class="terminal-input-line">
+            <span class="terminal-prompt" id="terminalPrompt">kenny@portfolio:~$</span>
+            <input type="text" id="terminalInput" class="terminal-input" autocomplete="off" spellcheck="false" autofocus>
         </div>
     </div>
 
-    <div class="gui" id="gui" style="display: none;">
-        <nav class="gui-nav">
-            <a href="#" onclick="showGuiFile('about')">About</a>
-            <a href="#" onclick="showGuiFile('projects')">Projects</a>
-            <a href="#" onclick="showGuiFile('resume')">Resume</a>
-            <a href="#" onclick="showGuiFile('contact')">Contact</a>
-            <a href="slopcannon.html">Play Game</a>
-        </nav>
-        <div class="gui-content" id="guiContent">
-            <h1>Welcome</h1>
-            <p>Click a link above to explore.</p>
+    <div id="ide" class="ide-container hidden">
+        <aside class="ide-sidebar">
+            <div class="ide-sidebar-header">
+                <span class="ide-sidebar-title">Explorer</span>
+                <button class="ide-sidebar-toggle" onclick="toggleSidebar()" title="Toggle Sidebar">☰</button>
+            </div>
+            <div class="ide-explorer">
+                <div class="ide-section">
+                    <div class="ide-section-header">
+                        <span class="ide-section-arrow">▼</span>
+                        <span>PROJECT</span>
+                    </div>
+                    <div class="ide-file-tree" id="fileTree"></div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="ide-main">
+            <div class="ide-tabs" id="ideTabs"></div>
+            <div class="ide-editor">
+                <div id="ideEditorContent">
+                    <div class="ide-editor-empty">Select a file to view</div>
+                </div>
+            </div>
+            <div class="ide-terminal-panel">
+                <div class="ide-terminal-header">
+                    <span>Terminal</span>
+                    <div class="ide-terminal-actions">
+                        <button class="ide-terminal-btn" onclick="toggleIDETerminal()" title="Toggle Terminal">▼</button>
+                    </div>
+                </div>
+                <div class="ide-terminal-body">
+                    <div class="ide-terminal-output" id="ideTerminalOutput"></div>
+                    <div class="ide-terminal-input-line">
+                        <span class="ide-terminal-prompt" id="ideTerminalPrompt">kenny@portfolio:~$</span>
+                        <input type="text" id="ideTerminalInput" class="ide-terminal-input" autocomplete="off" spellcheck="false">
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div class="ide-statusbar">
+            <span class="ide-statusbar-item" id="statusDir">~</span>
+            <span class="ide-statusbar-item">main</span>
+            <span class="ide-statusbar-item">UTF-8</span>
         </div>
     </div>
 
-    <script src="js/terminal.js"></script>
+    <div id="commandPalette" class="hidden" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--bg-secondary); border: 1px solid var(--border); padding: 10px; z-index: 1000; min-width: 300px;">
+        <input type="text" id="paletteInput" placeholder="Type a command..." style="width: 100%; background: var(--bg-primary); border: none; color: var(--fg-primary); padding: 8px; font-family: var(--font-mono);" onkeydown="if(event.key === 'Enter') { runPaletteCommand(this.value); }" onblur="hideCommandPalette()">
+    </div>
+
+    <script src="js/core/filesystem.js"></script>
+    <script src="js/core/state.js"></script>
+    <script src="js/core/parser.js"></script>
+    <script src="js/core/commands.js"></script>
+    <script src="js/core/history.js"></script>
+    <script src="js/modes/terminal.js"></script>
+    <script src="js/modes/ide.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>
