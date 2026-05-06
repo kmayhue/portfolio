@@ -31,6 +31,8 @@ function print(text, type = 'result') {
     if (typeof text === 'object' && text.error) {
         line.className = 'error';
         line.textContent = text.error;
+    } else if (type === 'command') {
+        line.innerHTML = `<span class="prompt-text">${text.split('$')[0]}$</span>${text.split('$').slice(1).join('$')}`;
     } else {
         line.textContent = text;
     }
