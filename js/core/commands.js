@@ -1,6 +1,6 @@
 const commands = {
     help: {
-        execute: () => 'Available commands: help, clear, pwd, whoami, date, echo, nvim, ls, cd, curl',
+        execute: () => 'Available commands: help, clear, pwd, whoami, date, echo, nvim, ls, cd, curl, chat',
         help: 'Show help message'
     },
     clear: {

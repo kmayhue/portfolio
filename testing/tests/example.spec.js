@@ -215,4 +215,26 @@ test.describe('Portfolio Terminal', () => {
     await input.press('Enter');
     await expect(page.locator('.output')).toContainText('could not resolve host');
   });
+
+  test('chat command starts interactive prompt', async ({ page }) => {
+    const input = page.locator('#commandInput');
+    const prompt = page.locator('#prompt');
+
+    await input.fill('chat');
+    await input.press('Enter');
+    await expect(page.locator('.output')).toContainText('Send me a message');
+    await expect(page.locator('.output')).toContainText('Enter your name:');
+    await expect(prompt).toHaveText('Name: ');
+
+    await input.fill('John');
+    await input.press('Enter');
+    await expect(page.locator('.output')).toContainText('Enter your message:');
+    await expect(prompt).toHaveText('Message: ');
+
+    await input.fill('Hello Kenny!');
+    await input.press('Enter');
+    await expect(page.locator('.output')).toContainText('Message Preview');
+    await expect(page.locator('.output')).toContainText('Name: John');
+    await expect(page.locator('.output')).toContainText('Message: Hello Kenny!');
+  });
 });

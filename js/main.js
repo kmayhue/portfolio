@@ -5,7 +5,8 @@ const promptEl = document.getElementById('prompt');
 const state = {
     currentDir: '~',
     history: [],
-    historyIndex: -1
+    historyIndex: -1,
+    chatState: null
 };
 
 function getPrompt() {
@@ -39,6 +40,11 @@ function print(text, type = 'result') {
 }
 
 function handleCommand(cmd) {
+    if (state.chatState) {
+        handleChatInput(cmd);
+        return;
+    }
+
     const fullPrompt = getPrompt();
     print(`${fullPrompt} ${cmd}`, 'command');
 
@@ -46,6 +52,11 @@ function handleCommand(cmd) {
 
     if (!command) {
         updatePrompt();
+        return;
+    }
+
+    if (command === 'chat') {
+        startChat();
         return;
     }
 
@@ -70,6 +81,43 @@ function handleCommand(cmd) {
     updatePrompt();
 }
 
+function startChat() {
+    state.chatState = { step: 'name', data: {} };
+    print('', 'result');
+    print('--- Send me a message ---', 'result');
+    print('Enter your name:', 'prompt');
+    promptEl.textContent = 'Name: ';
+}
+
+function handleChatInput(value) {
+    if (state.chatState.step === 'name') {
+        state.chatState.data.name = value;
+        state.chatState.step = 'message';
+        print('Enter your message:', 'prompt');
+        promptEl.textContent = 'Message: ';
+    } else if (state.chatState.step === 'message') {
+        state.chatState.data.message = value;
+        state.chatState.step = 'done';
+
+        const { name, message } = state.chatState.data;
+        print('', 'result');
+        print('--- Message Preview ---', 'result');
+        print(`Name: ${name}`, 'result');
+        print(`Message: ${message}`, 'result');
+        print('', 'result');
+
+        const subject = encodeURIComponent('Portfolio Message from ' + name);
+        const body = encodeURIComponent(`Name: ${name}\n\nMessage:\n${message}`);
+        const mailtoUrl = `mailto:mayhuek@gmail.com?subject=${subject}&body=${body}`;
+
+        print('Opening email client...', 'result');
+        window.location.href = mailtoUrl;
+
+        state.chatState = null;
+        updatePrompt();
+    }
+}
+
 input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
         const cmd = input.value;
@@ -77,12 +125,14 @@ input.addEventListener('keydown', (e) => {
         handleCommand(cmd);
     } else if (e.key === 'ArrowUp') {
         e.preventDefault();
+        if (state.chatState) return;
         if (state.historyIndex > 0) {
             state.historyIndex--;
             input.value = state.history[state.historyIndex];
         }
     } else if (e.key === 'ArrowDown') {
         e.preventDefault();
+        if (state.chatState) return;
         if (state.historyIndex < state.history.length - 1) {
             state.historyIndex++;
             input.value = state.history[state.historyIndex];
@@ -92,6 +142,7 @@ input.addEventListener('keydown', (e) => {
         }
     } else if (e.key === 'Tab') {
         e.preventDefault();
+        if (state.chatState) return;
         handleTabCompletion();
     }
 });
