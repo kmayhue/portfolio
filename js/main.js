@@ -18,6 +18,22 @@ function updatePrompt() {
     promptEl.textContent = getPrompt();
 }
 
+function updateStatusBar() {
+    const winbarPath = document.getElementById('winbarPath');
+    const statusDir = document.getElementById('statusDir');
+    const statusMode = document.getElementById('statusMode');
+
+    const dir = state.currentDir === '~' ? '~' : state.currentDir.replace(/^~\//, '~/');
+    if (winbarPath) winbarPath.textContent = dir;
+    if (statusDir) statusDir.textContent = dir;
+
+    if (state.chatState) {
+        if (statusMode) statusMode.textContent = 'INSERT';
+    } else {
+        if (statusMode) statusMode.textContent = 'NORMAL';
+    }
+}
+
 function scrollToBottom() {
     output.scrollTop = output.scrollHeight;
 }
@@ -87,6 +103,7 @@ function handleCommand(cmd) {
     }
 
     updatePrompt();
+    updateStatusBar();
 }
 
 function startChat() {
