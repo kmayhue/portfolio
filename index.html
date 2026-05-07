@@ -14,12 +14,17 @@
         <div class="status-bar">
             <div class="status-left">
                 <span class="status-item mode" id="statusMode">NORMAL</span>
-                <span class="status-item">ls</span>
-                <span class="status-item">help</span>
+            </div>
+            <div class="nav-bar">
+                <button class="nav-link" data-action="nvim about.txt">About</button>
+                <button class="nav-link" data-action="cd projects">Projects</button>
+                <button class="nav-link" data-action="curl github">GitHub</button>
+                <button class="nav-link" data-action="curl linkedin">LinkedIn</button>
+                <button class="nav-link chat" data-action="chat">Chat</button>
+                <button class="nav-link home" data-action="cd ~">~</button>
             </div>
             <div class="status-right">
                 <span class="status-item" id="statusDir">~</span>
-                <span class="status-item">UTF-8</span>
             </div>
         </div>
         <div class="terminal-content">

@@ -45,7 +45,7 @@ body {
 }
 
 .status-bar {
-    height: 24px;
+    height: 32px;
     background: var(--bg-dark);
     border-bottom: 1px solid var(--border);
     display: flex;
@@ -53,14 +53,25 @@ body {
     justify-content: space-between;
     padding: 0 16px;
     font-size: 12px;
-    color: var(--fg);
     flex-shrink: 0;
 }
 
-.status-left, .status-right {
+.status-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nav-bar {
     display: flex;
     align-items: center;
     gap: 16px;
+}
+
+.status-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .status-item {
@@ -76,12 +87,41 @@ body {
     letter-spacing: 0.5px;
 }
 
-.status-item.git {
-    color: var(--comment);
+.nav-link {
+    background: none;
+    border: none;
+    color: var(--fg);
+    font-family: var(--font);
+    font-size: 13px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.15s ease;
 }
 
-.status-item.git span {
+.nav-link:hover {
+    background: var(--bg-alt);
+    color: var(--fg-bright);
+}
+
+.nav-link[data-action*="cd"] {
+    color: var(--directory);
+}
+
+.nav-link[data-action*="curl"] {
+    color: var(--link);
+}
+
+.nav-link.chat {
     color: var(--success);
+}
+
+.nav-link.home {
+    color: var(--fg-muted);
+}
+
+.nav-link.home:hover {
+    color: var(--fg-bright);
 }
 
 .terminal-content {
@@ -191,7 +231,12 @@ body {
         padding: 10px 12px;
     }
 
-    .status-bar {
-        display: none;
+    .nav-bar {
+        gap: 8px;
+    }
+
+    .nav-link {
+        padding: 4px 6px;
+        font-size: 12px;
     }
 }

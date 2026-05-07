@@ -205,6 +205,16 @@ document.addEventListener('click', (e) => {
     if (e.target !== input) input.focus();
 });
 
+document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const action = link.dataset.action;
+        if (action) {
+            handleCommand(action);
+        }
+    });
+});
+
 print('Welcome to kenny@portfolio');
 print('Type "help" for available commands');
 print('');
