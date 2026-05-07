@@ -10,7 +10,7 @@ test.describe('Portfolio Terminal', () => {
   });
 
   test('shows welcome message', async ({ page }) => {
-    await expect(page.locator('.output')).toContainText('Welcome to kenny@portfolio');
+    await expect(page.locator('.output')).toContainText('KENNY MAYHUE');
   });
 
   test('basic commands work', async ({ page }) => {
@@ -176,8 +176,8 @@ test.describe('Portfolio Terminal', () => {
 
     await input.fill('nvim about.txt');
     await input.press('Enter');
-    await expect(page.locator('.output')).toContainText("I'm Kenny");
-    await expect(page.locator('.output')).toContainText('Senior Data Engineer');
+    await expect(page.locator('.output')).toContainText('KENNY MAYHUE');
+    await expect(page.locator('.output')).toContainText('Open to new opportunities');
   });
 
   test('curl github opens GitHub', async ({ page }) => {

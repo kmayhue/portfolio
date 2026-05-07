@@ -4,14 +4,16 @@ const filesystem = {
         children: {
             'about.txt': {
                 type: 'file',
-                content: `Hi, I'm Kenny
-Senior Data Engineer based in Emeryville, CA
+                content: `KENNY MAYHUE
+Senior Data Engineer
+Emeryville, CA
 
-I specialize in building data pipelines, ETL processes, and
-turning raw data into actionable insights.
+Building data pipelines that power business decisions.
+Currently: Open to new opportunities
+Previously: EarthOptics, Meta, Williams-Sonoma
+Education: B.S. Mathematics, University of Arizona
 
-Currently open to new opportunities in data engineering
-and related fields.`,
+Skills: Python, SQL, BigQuery, dbt, Airflow, Docker, GCP`,
                 url: null
             },
             'projects': {

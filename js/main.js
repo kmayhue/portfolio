@@ -215,7 +215,22 @@ document.querySelectorAll('.nav-link').forEach(link => {
     });
 });
 
-print('Welcome to kenny@portfolio');
-print('Type "help" for available commands');
-print('');
+const aboutContent = `
+╔═══════════════════════════════════════════════════════════╗
+║  KENNY MAYHUE                                            ║
+║  Senior Data Engineer                                    ║
+║  Emeryville, CA                                          ║
+╚═══════════════════════════════════════════════════════════╝
+
+  Building data pipelines that power business decisions.
+  Currently: Open to new opportunities
+  Previously: EarthOptics, Meta, Williams-Sonoma
+  Education: B.S. Mathematics, University of Arizona
+
+  Skills: Python, SQL, BigQuery, dbt, Airflow, Docker, GCP
+
+  Type "help" for available commands.
+`;
+
+print(aboutContent);
 updatePrompt();
