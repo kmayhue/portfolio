@@ -151,14 +151,13 @@ const commands = {
         },
         help: 'Open URL in new tab',
         completer: (partial, state) => {
-            const shortcuts = ['github.com', 'github', 'linkedin.com', 'linkedin'];
+            const shortcuts = ['github', 'linkedin', 'github.txt', 'linkedin.txt', 'portfolio.txt', 'email.txt'];
             const matches = shortcuts.filter(s => s.startsWith(partial));
             if (matches.length) return matches;
 
             const items = listDirectory(state.currentDir);
             if (!items) return [];
-            const prefix = state.currentDir === '~' ? '~/' : state.currentDir + '/';
-            return items.filter(i => i.url).map(i => prefix + i.name);
+            return items.filter(i => i.url).map(i => i.name);
         }
     },
     tree: {
