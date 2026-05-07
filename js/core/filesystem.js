@@ -16,11 +16,19 @@ Education: B.S. Mathematics, University of Arizona
 Skills: Python, SQL, BigQuery, dbt, Airflow, Docker, GCP`,
                 url: null
             },
+            'portfolio.txt': {
+                type: 'file',
+                content: 'https://kmayhue.github.io/portfolio/',
+                url: 'https://kmayhue.github.io/portfolio/'
+            },
             'projects': {
                 type: 'directory',
                 children: {
-                    'data-pipeline.md': { type: 'file', content: '# Data Pipeline\n\nReal-time ETL pipeline project.' },
-                    'etl-tool.md': { type: 'file', content: '# ETL Tool\n\nCustom ETL framework in Python.' }
+                    'portfolio.txt': {
+                        type: 'file',
+                        content: 'https://kmayhue.github.io/portfolio/',
+                        url: 'https://kmayhue.github.io/portfolio/'
+                    }
                 }
             },
             'resume.md': { type: 'file', content: '# Resume\n\nSenior Data Engineer\n2022 - Present' },

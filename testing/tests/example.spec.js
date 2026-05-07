@@ -127,8 +127,7 @@ test.describe('Portfolio Terminal', () => {
 
     await input.fill('ls');
     await input.press('Enter');
-    await expect(page.locator('.output')).toContainText('data-pipeline.md');
-    await expect(page.locator('.output')).toContainText('etl-tool.md');
+    await expect(page.locator('.output')).toContainText('portfolio.txt');
   });
 
   test('cd back to home with ~', async ({ page }) => {
