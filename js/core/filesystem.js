@@ -119,6 +119,7 @@ B.S. Mathematics, Minor in Economics | 2017` },
 
 function resolvePath(path) {
     if (!path) return [];
+    if (path === '~') return [];
 
     let parts;
     if (path.startsWith('/')) {
