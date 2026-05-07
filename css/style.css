@@ -92,7 +92,7 @@ body {
     border: none;
     color: var(--fg);
     font-family: var(--font);
-    font-size: 22px;
+    font-size: 28px;
     font-weight: 600;
     cursor: pointer;
     padding: 6px 14px;
@@ -208,7 +208,7 @@ body {
     margin-right: 10px;
     white-space: nowrap;
     font-weight: 700;
-    font-size: 14px;
+    font-size: 20px;
 }
 
 #commandInput {
@@ -238,6 +238,6 @@ body {
 
     .nav-link {
         padding: 4px 6px;
-        font-size: 12px;
+        font-size: 20px;
     }
 }
