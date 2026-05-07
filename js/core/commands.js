@@ -5,9 +5,9 @@ const commands = {
     },
     about: {
         execute: () => `╔════════════════════════════════════════════════════════════╗
-║  KENNY MAYHUE                                             ║
-║  Senior Data Engineer                                     ║
-║  Emeryville, CA                                           ║
+║  KENNY MAYHUE                                              ║
+║  Senior Data Engineer                                      ║
+║  Emeryville, CA                                            ║
 ╚════════════════════════════════════════════════════════════╝
 
   Building data pipelines that power business decisions.
