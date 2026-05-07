@@ -1,22 +1,22 @@
 :root {
     --bg: #1a1b26;
-    --bg-alt: #16161e;
-    --bg-dark: #0f0f14;
+    --bg-alt: #24283b;
+    --bg-dark: #16161e;
+    --fg: #c0caf5;
+    --fg-bright: #e0eafc;
     --fg: #a9b1d6;
-    --fg-light: #c0caf5;
-    --fg-muted: #565f89;
     --prompt: #7aa2f7;
-    --error: #f7768e;
-    --warning: #e0af68;
+    --error: #ff757f;
+    --warning: #ffdb6e;
     --success: #9ece6a;
     --directory: #7dcfff;
     --link: #7aa2f7;
     --string: #9ece6a;
     --keyword: #bb9af7;
-    --function: #7aa2f7;
+    --function: #82aaff;
     --number: #ff9e64;
     --comment: #565f89;
-    --border: #292e42;
+    --border: #3b4261;
     --font: 'Fira Code', 'Consolas', 'Monaco', monospace;
 }
 
@@ -45,100 +45,17 @@ body {
     flex-direction: column;
 }
 
-.terminal-body {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px 20px;
-}
-
-.output {
-    white-space: pre-wrap;
-    padding-bottom: 8px;
-}
-
-.output .command {
-    color: var(--fg-light);
-    font-weight: 500;
-}
-
-.output .result {
-    color: var(--fg);
-}
-
-.output .error {
-    color: var(--error);
-    font-weight: 500;
-}
-
-.output .directory {
-    color: var(--directory);
-    font-weight: 600;
-}
-
-.output .file {
-    color: var(--fg-light);
-}
-
-.output .url-file {
-    color: var(--link);
-    font-weight: 500;
-}
-
-.output .prompt-text {
-    color: var(--prompt);
-    font-weight: 600;
-}
-
-.output .warning {
-    color: var(--warning);
-}
-
-.output .success {
-    color: var(--success);
-}
-
-.output .string {
-    color: var(--string);
-}
-
-.input-line {
-    display: flex;
-    align-items: center;
-    padding: 12px 20px;
-    background: var(--bg-alt);
-    border-top: 1px solid var(--border);
-}
-
-.prompt {
-    color: var(--prompt);
-    margin-right: 10px;
-    white-space: nowrap;
-    font-weight: 600;
-    font-size: 14px;
-}
-
-#commandInput {
-    background: transparent;
-    border: none;
-    color: var(--fg-light);
-    font-family: var(--font);
-    font-size: 15px;
-    flex: 1;
-    outline: none;
-    caret-color: var(--prompt);
-    min-width: 0;
-}
-
 .status-bar {
     height: 24px;
     background: var(--bg-dark);
-    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 16px;
     font-size: 12px;
-    color: var(--fg-muted);
+    color: var(--fg);
+    flex-shrink: 0;
 }
 
 .status-left, .status-right {
@@ -155,35 +72,105 @@ body {
 
 .status-item.mode {
     color: var(--warning);
-    font-weight: 600;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .status-item.git {
-    color: var(--fg-muted);
+    color: var(--comment);
 }
 
 .status-item.git span {
     color: var(--success);
 }
 
-.winbar {
-    height: 28px;
-    background: var(--bg-dark);
-    border-bottom: 1px solid var(--border);
+.input-area {
     display: flex;
     align-items: center;
-    padding: 0 16px;
-    font-size: 13px;
-    color: var(--fg-muted);
+    padding: 12px 20px;
+    background: var(--bg-alt);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
 }
 
-.winbar-path {
-    color: var(--fg-light);
+.prompt {
+    color: var(--prompt);
+    margin-right: 10px;
+    white-space: nowrap;
+    font-weight: 700;
+    font-size: 14px;
 }
 
-.winbar-separator {
-    margin: 0 8px;
-    color: var(--border);
+#commandInput {
+    background: transparent;
+    border: none;
+    color: var(--fg-bright);
+    font-family: var(--font);
+    font-size: 15px;
+    flex: 1;
+    outline: none;
+    caret-color: var(--prompt);
+    min-width: 0;
+}
+
+.terminal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 20px;
+}
+
+.output {
+    white-space: pre-wrap;
+    padding-bottom: 8px;
+}
+
+.output .command {
+    color: var(--fg-bright);
+    font-weight: 600;
+}
+
+.output .result {
+    color: var(--fg-bright);
+}
+
+.output .error {
+    color: var(--error);
+    font-weight: 700;
+}
+
+.output .directory {
+    color: var(--directory);
+    font-weight: 700;
+}
+
+.output .file {
+    color: var(--fg-bright);
+}
+
+.output .url-file {
+    color: var(--function);
+    font-weight: 600;
+}
+
+.output .prompt-text {
+    color: var(--prompt);
+    font-weight: 700;
+}
+
+.output .warning {
+    color: var(--warning);
+    font-weight: 600;
+}
+
+.output .success {
+    color: var(--success);
+    font-weight: 600;
+}
+
+.output .string {
+    color: var(--string);
+    font-weight: 600;
 }
 
 @media (max-width: 600px) {
@@ -191,11 +178,11 @@ body {
         padding: 12px;
     }
 
-    .input-line {
+    .input-area {
         padding: 10px 12px;
     }
 
-    .winbar, .status-bar {
+    .status-bar {
         display: none;
     }
 }
