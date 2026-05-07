@@ -122,3 +122,29 @@ function getFileUrl(path) {
     }
     return node.url || null;
 }
+
+function getDirectoryTree(path, prefix = '', isLast = true) {
+    const items = listDirectory(path);
+    if (!items) return [];
+
+    const lines = [];
+    const lastIndex = items.length - 1;
+
+    items.forEach((item, index) => {
+        const isLastItem = index === lastIndex;
+        const connector = isLastItem ? '└── ' : '├── ';
+        const currentPath = (path === '~/' ? '~/' : path) + item.name;
+
+        if (item.isDirectory) {
+            lines.push({ text: prefix + connector + item.name + '/', type: 'directory', path: currentPath });
+            const newPrefix = prefix + (isLastItem ? '    ' : '│   ');
+            const subTree = getDirectoryTree(currentPath + '/', newPrefix, true);
+            lines.push(...subTree);
+        } else {
+            const type = item.url ? 'url-file' : 'file';
+            lines.push({ text: prefix + connector + item.name, type, path: currentPath });
+        }
+    });
+
+    return lines;
+}

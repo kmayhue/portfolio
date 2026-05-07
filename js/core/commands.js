@@ -1,6 +1,6 @@
 const commands = {
     help: {
-        execute: () => 'Available commands: help, clear, pwd, whoami, date, echo, nvim, ls, cd, curl, chat',
+        execute: () => 'Available commands: help, clear, pwd, whoami, date, echo, nvim, ls, cd, curl, chat, tree',
         help: 'Show help message'
     },
     clear: {
@@ -146,6 +146,23 @@ const commands = {
             const prefix = state.currentDir === '~' ? '~/' : state.currentDir + '/';
             return items.filter(i => i.url).map(i => prefix + i.name);
         }
+    },
+    tree: {
+        execute: (args, state) => {
+            const path = args[0] ? normalizePath(args[0], state.currentDir) : (state.currentDir === '~' ? '~/' : state.currentDir);
+            const tree = getDirectoryTree(path);
+
+            if (!tree || tree.length === 0) {
+                return { error: `tree: '${args[0] || path}': No such directory` };
+            }
+
+            const html = tree.map(item => {
+                return `<span class="${item.type}">${item.text}</span>`;
+            }).join('\n');
+
+            return { html };
+        },
+        help: 'Display directory tree'
     }
 };
 
