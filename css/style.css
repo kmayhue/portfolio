@@ -34,7 +34,7 @@ body {
     font-family: var(--font);
     background: var(--bg);
     color: var(--fg);
-    font-size: 18px;
+    font-size: 20px;
     line-height: 1.6;
 }
 
@@ -92,10 +92,11 @@ body {
     border: none;
     color: var(--fg);
     font-family: var(--font);
-    font-size: 15px;
+    font-size: 22px;
+    font-weight: 600;
     cursor: pointer;
-    padding: 4px 10px;
-    border-radius: 4px;
+    padding: 6px 14px;
+    border-radius: 6px;
     transition: all 0.15s ease;
 }
 
@@ -215,7 +216,7 @@ body {
     border: none;
     color: var(--fg-bright);
     font-family: var(--font);
-    font-size: 18px;
+    font-size: 20px;
     flex: 1;
     outline: none;
     caret-color: var(--prompt);
