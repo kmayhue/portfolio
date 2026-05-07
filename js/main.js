@@ -228,5 +228,5 @@ document.querySelectorAll('.nav-link').forEach(link => {
     });
 });
 
-handleCommand('about');
+handleCommand('nvim about.txt');
 updatePrompt();
