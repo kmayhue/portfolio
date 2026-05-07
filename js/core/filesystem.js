@@ -4,16 +4,18 @@ const filesystem = {
         children: {
             'about.txt': {
                 type: 'file',
-                content: `KENNY MAYHUE
-Senior Data Engineer
-Emeryville, CA
+                content: `╔════════════════════════════════════════════════════════════╗
+║  KENNY MAYHUE                                             ║
+║  Senior Data Engineer                                     ║
+║  Emeryville, CA                                           ║
+╚════════════════════════════════════════════════════════════╝
 
-Building data pipelines that power business decisions.
-Currently: Open to new opportunities
-Previously: EarthOptics, Meta, Williams-Sonoma
-Education: B.S. Mathematics, University of Arizona
+  Building data pipelines that power business decisions.
+  Currently: Open to new opportunities
+  Previously: EarthOptics, Meta, Williams-Sonoma
+  Education: B.S. Mathematics, University of Arizona
 
-Skills: Python, SQL, BigQuery, dbt, Airflow, Docker, GCP`,
+  Skills: Python, SQL, BigQuery, dbt, Airflow, Docker, GCP`,
                 url: null
             },
             'portfolio.txt': {

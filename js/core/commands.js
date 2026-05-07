@@ -3,23 +3,6 @@ const commands = {
         execute: () => 'Available commands: help, clear, pwd, whoami, date, echo, nvim, ls, cd, curl, chat, tree, mkdir, touch, rm',
         help: 'Show help message'
     },
-    about: {
-        execute: () => `╔════════════════════════════════════════════════════════════╗
-║  KENNY MAYHUE                                              ║
-║  Senior Data Engineer                                      ║
-║  Emeryville, CA                                            ║
-╚════════════════════════════════════════════════════════════╝
-
-  Building data pipelines that power business decisions.
-  Currently: Open to new opportunities
-  Previously: EarthOptics, Meta, Williams-Sonoma
-  Education: B.S. Mathematics, University of Arizona
-
-  Skills: Python, SQL, BigQuery, dbt, Airflow, Docker, GCP
-
-  Type "help" for available commands.`,
-        help: 'Show about information'
-    },
     clear: {
         execute: () => ({ clear: true }),
         help: 'Clear terminal'
