@@ -194,9 +194,10 @@ function handleTabCompletion() {
     let completions = [];
 
     if (parts.length === 1) {
-        completions = Object.keys(commands).filter(c => c.startsWith(partial));
-        if (partial === '' && completions.length === 0) {
+        if (partial === '') {
             completions = Object.keys(commands);
+        } else {
+            completions = Object.keys(commands).filter(c => c.startsWith(partial));
         }
     } else {
         const cmd = parts[0];

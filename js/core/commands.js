@@ -40,21 +40,35 @@ const commands = {
         completer: (partial, state) => {
             const items = listDirectory(state.currentDir);
             if (!items) return [];
-            const prefix = state.currentDir === '~' ? '~/' : state.currentDir + '/';
-            return items.filter(i => i.name.startsWith(partial)).map(i => prefix + i.name);
+            return items.filter(i => i.name.startsWith(partial)).map(i => i.name);
         }
     },
     cat: {
         execute: (args, state) => commands.nvim.execute(args, state),
-        help: 'View file'
+        help: 'View file',
+        completer: (partial, state) => {
+            const items = listDirectory(state.currentDir);
+            if (!items) return [];
+            return items.filter(i => i.name.startsWith(partial)).map(i => i.name);
+        }
     },
     vim: {
         execute: (args, state) => commands.nvim.execute(args, state),
-        help: 'View file'
+        help: 'View file',
+        completer: (partial, state) => {
+            const items = listDirectory(state.currentDir);
+            if (!items) return [];
+            return items.filter(i => i.name.startsWith(partial)).map(i => i.name);
+        }
     },
     vi: {
         execute: (args, state) => commands.nvim.execute(args, state),
-        help: 'View file'
+        help: 'View file',
+        completer: (partial, state) => {
+            const items = listDirectory(state.currentDir);
+            if (!items) return [];
+            return items.filter(i => i.name.startsWith(partial)).map(i => i.name);
+        }
     },
     ls: {
         execute: (args, state) => {
