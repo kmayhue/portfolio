@@ -223,7 +223,8 @@ document.querySelectorAll('.nav-link').forEach(link => {
         e.preventDefault();
         const action = link.dataset.action;
         if (action) {
-            handleCommand(action);
+            const commands = action.split(';').map(c => c.trim());
+            commands.forEach(cmd => handleCommand(cmd));
         }
     });
 });
