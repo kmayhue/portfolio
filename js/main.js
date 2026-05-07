@@ -147,7 +147,17 @@ function handleChatInput(value) {
 }
 
 input.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
+    if (e.ctrlKey && e.key === 'c') {
+        e.preventDefault();
+        input.value = '';
+        print('^C', 'result');
+        state.chatState = null;
+        updatePrompt();
+    } else if (e.ctrlKey && e.key === 'l') {
+        e.preventDefault();
+        output.innerHTML = '';
+        updatePrompt();
+    } else if (e.key === 'Enter') {
         const cmd = input.value;
         input.value = '';
         handleCommand(cmd);
@@ -185,6 +195,9 @@ function handleTabCompletion() {
 
     if (parts.length === 1) {
         completions = Object.keys(commands).filter(c => c.startsWith(partial));
+        if (partial === '' && completions.length === 0) {
+            completions = Object.keys(commands);
+        }
     } else {
         const cmd = parts[0];
         if (commands[cmd] && commands[cmd].completer) {
@@ -215,22 +228,5 @@ document.querySelectorAll('.nav-link').forEach(link => {
     });
 });
 
-const aboutContent = `
-╔═══════════════════════════════════════════════════════════╗
-║  KENNY MAYHUE                                            ║
-║  Senior Data Engineer                                    ║
-║  Emeryville, CA                                          ║
-╚═══════════════════════════════════════════════════════════╝
-
-  Building data pipelines that power business decisions.
-  Currently: Open to new opportunities
-  Previously: EarthOptics, Meta, Williams-Sonoma
-  Education: B.S. Mathematics, University of Arizona
-
-  Skills: Python, SQL, BigQuery, dbt, Airflow, Docker, GCP
-
-  Type "help" for available commands.
-`;
-
-print(aboutContent);
+handleCommand('about');
 updatePrompt();

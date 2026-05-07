@@ -1,7 +1,24 @@
 const commands = {
     help: {
-        execute: () => 'Available commands: help, clear, pwd, whoami, date, echo, nvim, ls, cd, curl, chat, tree',
+        execute: () => 'Available commands: help, clear, pwd, whoami, date, echo, nvim, ls, cd, curl, chat, tree, mkdir, touch, rm, about',
         help: 'Show help message'
+    },
+    about: {
+        execute: () => `╔════════════════════════════════════════════════════════════╗
+║  KENNY MAYHUE                                             ║
+║  Senior Data Engineer                                     ║
+║  Emeryville, CA                                           ║
+╚════════════════════════════════════════════════════════════╝
+
+  Building data pipelines that power business decisions.
+  Currently: Open to new opportunities
+  Previously: EarthOptics, Meta, Williams-Sonoma
+  Education: B.S. Mathematics, University of Arizona
+
+  Skills: Python, SQL, BigQuery, dbt, Airflow, Docker, GCP
+
+  Type "help" for available commands.`,
+        help: 'Show about information'
     },
     clear: {
         execute: () => ({ clear: true }),
@@ -178,6 +195,69 @@ function normalizePath(path, currentDir) {
     if (currentDir === '~') return '~/' + path;
     return currentDir + '/' + path;
 }
+
+commands.mkdir = {
+    execute: (args, state) => {
+        if (!args[0]) return { error: 'mkdir: missing operand' };
+        const path = normalizePath(args[0], state.currentDir);
+        const parts = resolvePath(path);
+        const name = parts.pop();
+        const parentPath = parts.length === 0 ? '~' : '~/' + parts.join('/');
+        const parent = getNode(parentPath);
+        if (!parent || parent.type !== 'directory') {
+            return { error: `mkdir: cannot create directory '${args[0]}': No such parent directory` };
+        }
+        if (parent.children && parent.children[name]) {
+            return { error: `mkdir: cannot create directory '${args[0]}': File exists` };
+        }
+        if (!parent.children) parent.children = {};
+        parent.children[name] = { type: 'directory', children: {} };
+        return '';
+    },
+    help: 'Create directory'
+};
+
+commands.touch = {
+    execute: (args, state) => {
+        if (!args[0]) return { error: 'touch: missing file operand' };
+        const path = normalizePath(args[0], state.currentDir);
+        const parts = resolvePath(path);
+        const name = parts.pop();
+        const parentPath = parts.length === 0 ? '~' : '~/' + parts.join('/');
+        const parent = getNode(parentPath);
+        if (!parent || parent.type !== 'directory') {
+            return { error: `touch: cannot touch '${args[0]}': No such file or directory` };
+        }
+        if (!parent.children) parent.children = {};
+        if (!parent.children[name]) {
+            parent.children[name] = { type: 'file', content: '', url: null };
+        }
+        return '';
+    },
+    help: 'Create empty file'
+};
+
+commands.rm = {
+    execute: (args, state) => {
+        if (!args[0]) return { error: 'rm: missing operand' };
+        const isRecursive = args.includes('-r') || args.includes('-rf');
+        const pathArg = args[args.length - 1];
+        const path = normalizePath(pathArg, state.currentDir);
+        const parts = resolvePath(path);
+        const name = parts.pop();
+        const parentPath = parts.length === 0 ? '~' : '~/' + parts.join('/');
+        const parent = getNode(parentPath);
+        if (!parent || !parent.children || !parent.children[name]) {
+            return { error: `rm: cannot remove '${pathArg}': No such file or directory` };
+        }
+        if (parent.children[name].type === 'directory' && !isRecursive) {
+            return { error: `rm: cannot remove '${pathArg}': Is a directory` };
+        }
+        delete parent.children[name];
+        return '';
+    },
+    help: 'Remove file or directory (-r for recursive)'
+};
 
 function executeCommand(command, args, state) {
     const cmd = commands[command];
