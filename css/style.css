@@ -4,7 +4,6 @@
     --bg-dark: #16161e;
     --fg: #c0caf5;
     --fg-bright: #e0eafc;
-    --fg: #a9b1d6;
     --prompt: #7aa2f7;
     --error: #ff757f;
     --warning: #ffdb6e;
@@ -85,44 +84,25 @@ body {
     color: var(--success);
 }
 
-.input-area {
-    display: flex;
-    align-items: center;
-    padding: 12px 20px;
-    background: var(--bg-alt);
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-}
-
-.prompt {
-    color: var(--prompt);
-    margin-right: 10px;
-    white-space: nowrap;
-    font-weight: 700;
-    font-size: 14px;
-}
-
-#commandInput {
-    background: transparent;
-    border: none;
-    color: var(--fg-bright);
-    font-family: var(--font);
-    font-size: 15px;
+.terminal-content {
     flex: 1;
-    outline: none;
-    caret-color: var(--prompt);
-    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
 }
 
-.terminal-body {
+.output-wrapper {
     flex: 1;
     overflow-y: auto;
     padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
 }
 
 .output {
     white-space: pre-wrap;
-    padding-bottom: 8px;
 }
 
 .output .command {
@@ -173,8 +153,37 @@ body {
     font-weight: 600;
 }
 
+.input-area {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    background: var(--bg-alt);
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.prompt {
+    color: var(--prompt);
+    margin-right: 10px;
+    white-space: nowrap;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+#commandInput {
+    background: transparent;
+    border: none;
+    color: var(--fg-bright);
+    font-family: var(--font);
+    font-size: 15px;
+    flex: 1;
+    outline: none;
+    caret-color: var(--prompt);
+    min-width: 0;
+}
+
 @media (max-width: 600px) {
-    .terminal-body {
+    .output-wrapper {
         padding: 12px;
     }
 

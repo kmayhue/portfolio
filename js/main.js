@@ -35,7 +35,10 @@ function updateStatusBar() {
 }
 
 function scrollToBottom() {
-    output.scrollTop = output.scrollHeight;
+    const wrapper = document.querySelector('.output-wrapper');
+    if (wrapper) {
+        wrapper.scrollTop = wrapper.scrollHeight;
+    }
 }
 
 function print(text, type = 'result') {
