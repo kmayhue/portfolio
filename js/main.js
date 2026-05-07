@@ -147,6 +147,25 @@ function handleChatInput(value) {
 }
 
 input.addEventListener('keydown', (e) => {
+    const wrapper = document.querySelector('.output-wrapper');
+
+    if (document.activeElement !== input) {
+        if (e.key === 'j' || e.key === 'ArrowDown') {
+            e.preventDefault();
+            wrapper.scrollTop += 100;
+        } else if (e.key === 'k' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            wrapper.scrollTop -= 100;
+        } else if (e.key === 'h' || e.key === 'ArrowLeft') {
+            e.preventDefault();
+            wrapper.scrollLeft -= 50;
+        } else if (e.key === 'l' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            wrapper.scrollLeft += 50;
+        }
+        return;
+    }
+
     if (e.ctrlKey && e.key === 'c') {
         e.preventDefault();
         input.value = '';

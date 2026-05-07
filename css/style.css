@@ -139,7 +139,23 @@ body {
     padding: 16px 20px;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
+}
+
+.output-wrapper::-webkit-scrollbar {
+    width: 8px;
+}
+
+.output-wrapper::-webkit-scrollbar-track {
+    background: var(--bg);
+}
+
+.output-wrapper::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+}
+
+.output-wrapper::-webkit-scrollbar-thumb:hover {
+    background: var(--comment);
 }
 
 .output {
